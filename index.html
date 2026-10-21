@@ -10,12 +10,10 @@
         h3 { margin-top: 0; margin-bottom: 5px; }
         p { margin-top: 0; margin-bottom: 10px; font-weight: bold; color: #ffd700; }
         
-        /* Вкладки (Табы) */
         .tabs { display: flex; gap: 5px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
         .tab-btn { flex: 1; background: rgba(255,255,255,0.1); color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; white-space: nowrap; }
         .tab-btn.active { background: #ffd700; color: #333; font-weight: bold; }
         
-        /* Сетка для галочек с вкусами */
         .flavors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
         .flavor-checkbox { display: flex; align-items: center; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 5px; cursor: pointer; font-size: 13px; }
         .flavor-checkbox input { margin-right: 8px; transform: scale(1.2); cursor: pointer; }
@@ -41,7 +39,6 @@
 <body>
     <h2>Оптовый Магазин</h2>
 
-    <!-- Вкладки выбора объема -->
     <div class="tabs">
         <button class="tab-btn active" onclick="changeTab('10', event)">от 10 шт</button>
         <button class="tab-btn" onclick="changeTab('30', event)">от 30 шт</button>
@@ -49,26 +46,48 @@
         <button class="tab-btn" onclick="changeTab('100', event)">от 100 шт</button>
     </div>
 
-    <!-- Блок с товарами -->
     <div id="product-container"></div>
 
-    <!-- Плавающая кнопка заказа -->
     <button id="checkout-btn" onclick="openMetroModal()">🛒 Оформить заказ</button>
 
-    <!-- Всплывающее окно выбора метро -->
     <dialog id="metro-dialog">
         <h3>🚇 Выберите станцию метро</h3>
-        <p style="font-size: 14px; color: #666;">Доставка по Минску</p>
         <select id="metro-station">
             <option value="" disabled selected>--- Выберите станцию ---</option>
-            <optgroup label="🔴 Красная линия">
-                <option value="Малиновка">Малиновка</option>
-                <option value="Уручье">Уручье</option>
-            </optgroup>
-            <optgroup label="🔵 Синяя линия">
-                <option value="Каменная Горка">Каменная Горка</option>
-                <option value="Кунцевщина">Кунцевщина</option>
-            </optgroup>
+            <option value="Малиновка">Малиновка</option>
+            <option value="Петровщина">Петровщина</option>
+            <option value="Михалово">Михалово</option>
+            <option value="Грушевка">Грушевка</option>
+            <option value="Институт культуры">Институт культуры</option>
+            <option value="Площадь Ленина">Площадь Ленина</option>
+            <option value="Октябрьская">Октябрьская</option>
+            <option value="Площадь Победы">Площадь Победы</option>
+            <option value="Площадь Якуба Коласа">Площадь Якуба Коласа</option>
+            <option value="Академия наук">Академия наук</option>
+            <option value="Парк Челюскинцев">Парк Челюскинцев</option>
+            <option value="Московская">Московская</option>
+            <option value="Восток">Восток</option>
+            <option value="Борисовский тракт">Борисовский тракт</option>
+            <option value="Уручье">Уручье</option>
+            <option value="Каменная Горка">Каменная Горка</option>
+            <option value="Кунцевщина">Кунцевщина</option>
+            <option value="Спортивная">Спортивная</option>
+            <option value="Пушкинская">Пушкинская</option>
+            <option value="Молодёжная">Молодёжная</option>
+            <option value="Фрунзенская">Фрунзенская</option>
+            <option value="Немига">Немига</option>
+            <option value="Купаловская">Купаловская</option>
+            <option value="Первомайская">Первомайская</option>
+            <option value="Пролетарская">Пролетарская</option>
+            <option value="Тракторный завод">Тракторный завод</option>
+            <option value="Партизанская">Партизанская</option>
+            <option value="Автозаводская">Автозаводская</option>
+            <option value="Могилёвская">Могилёвская</option>
+            <option value="Слуцкий Гостинец">Слуцкий Гостинец</option>
+            <option value="Новаторская">Новаторская</option>
+            <option value="Вокзальная">Вокзальная</option>
+            <option value="Ковальская Слобода">Ковальская Слобода</option>
+            <option value="Юбилейная площадь">Юбилейная площадь</option>
         </select>
         <button onclick="confirmCheckout()">Подтвердить заказ</button>
         <button class="cancel-btn" onclick="closeMetroModal()">Отмена</button>
@@ -80,10 +99,8 @@
 
         let cart = [];
         let currentTab = '10';
-
         const PRICES = { '10': 15, '30': 14, '50': 13, '100': 12 };
 
-        // Вкусы
         const catswillFlavors = ["Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", "Лайм", "Банан", "Кокос", "Мята", "Ментол", "Мятный лимонад", "Мохито", "Кола", "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"];
         const monashkaFlavors = ["Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", "Лайм", "Банан", "Кокос", "Лесные ягоды", "Чёрная смородина", "Красная смородина", "Крыжовник", "Брусника", "Ice Grape", "Ice Strawberry", "Ice Peach", "Ice Mango", "Ice Watermelon", "Ice Melon", "Ice Black Currant", "Ice Lime", "Ice Mojito", "Ice Cola", "Ice Energy", "Кислая вишня", "Кислое яблоко", "Кислый арбуз", "Кислый мармелад", "Голубая малина", "Мята", "Ментол", "Лимонады", "Мохито", "Кола", "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"];
         const podonkiFlavors = ["Яблоко (Apple)", "Груша (Pear)", "Клубника (Strawberry)", "Персик (Peach)", "Виноград (Grape)", "Арбуз (Watermelon)", "Дыня (Melon)", "Манго (Mango)", "Ананас (Pineapple)", "Вишня (Cherry)", "Лимон (Lemon)", "Апельсин (Orange)", "Малина (Raspberry)", "Черника (Blueberry)", "Банан (Banana)", "Кокос (Coconut)", "Мята (Mint)", "Ледяная мята (Ice Mint)", "Ментол (Menthol)", "Табак (Tobacco)", "Кофе (Coffee)", "Шоколад (Chocolate)", "Карамель (Caramel)", "Ваниль (Vanilla)", "Кислый мармелад (Sour Gummy)", "Кислая вишня (Sour Cherry)", "Кислое яблоко (Sour Apple)", "Кислый арбуз (Sour Watermelon)", "Ледяной виноград (Ice Grape)", "Ледяная клубника (Ice Strawberry)", "Ледяной персик (Ice Peach)", "Ледяной манго (Ice Mango)", "Ледяной ананас (Ice Pineapple)", "Ледяная дыня (Ice Melon)", "Ледяной арбуз (Ice Watermelon)", "Мятный лимонад (Mint Lemonade)", "Клубничный лимонад (Strawberry Lemonade)", "Малиновый лимонад (Raspberry Lemonade)", "Голубая малина (Blue Raspberry)", "Ежевика (Blackberry)", "Киви (Kiwi)", "Маракуйя (Passion Fruit)", "Гранат (Pomegranate)", "Лайм (Lime)", "Кола (Cola)", "Энергетик (Energy Drink)", "Йогурт (Yogurt)", "Крем-сода (Cream Soda)", "Мохито (Mojito)"];
@@ -95,7 +112,6 @@
             renderProducts();
         }
 
-        // Универсальная функция для создания карточки
         function createBrandCard(brandId, brandTitle, flavors) {
             let checkboxesHTML = flavors.map((flavor, index) => `
                 <label class="flavor-checkbox">
@@ -111,7 +127,7 @@
                     <div class="flavors-grid">
                         ${checkboxesHTML}
                     </div>
-                    <button onclick="addSelectedToCart('${brandId}', '${brandTitle}', ${PRICES[currentTab]})">➕ Добавить выбранные</button>
+                    <button onclick="addSelectedToCart('${brandId}', '${brandTitle}')">➕ Добавить выбранные</button>
                 </div>
             `;
         }
@@ -124,10 +140,8 @@
                 createBrandCard('podonki', '🔹 Podonki', podonkiFlavors);
         }
 
-        function addSelectedToCart(brandId, brandTitle, price) {
-            // Ищем отмеченные чекбоксы только этого бренда по префиксу ID
+        function addSelectedToCart(brandId, brandTitle) {
             const checkboxes = document.querySelectorAll(`input[id^="${brandId}_"]:checked`);
-            
             if (checkboxes.length === 0) {
                 alert(`⚠️ Отметьте вкусы для ${brandTitle}!`);
                 return;
@@ -135,7 +149,7 @@
 
             let addedCount = 0;
             checkboxes.forEach(checkbox => {
-                cart.push({ name: brandTitle + " [" + checkbox.value + "]", price: price });
+                cart.push({ brand: brandTitle, flavor: checkbox.value });
                 addedCount++;
                 checkbox.checked = false;
             });
@@ -144,19 +158,36 @@
             alert(`✅ Добавлено в корзину: ${addedCount} шт.`);
         }
 
+        function calculateCart() {
+            let totalItems = cart.length;
+            let finalPricePerItem = 16; // Цена, если меньше 10 штук
+            
+            if (totalItems >= 100) finalPricePerItem = 12;
+            else if (totalItems >= 50) finalPricePerItem = 13;
+            else if (totalItems >= 30) finalPricePerItem = 14;
+            else if (totalItems >= 10) finalPricePerItem = 15;
+
+            let totalSum = totalItems * finalPricePerItem;
+            return { totalItems, finalPricePerItem, totalSum };
+        }
+
         function updateCheckoutBtn() {
             const btn = document.getElementById('checkout-btn');
             if (cart.length > 0) {
-                const total = cart.reduce((sum, item) => sum + item.price, 0);
+                const calc = calculateCart();
                 btn.style.display = 'block';
-                btn.innerText = `🛒 Оформить заказ (${cart.length} шт.) на ${total} руб.`;
+                btn.innerText = `🛒 Оформить заказ (${calc.totalItems} шт.) на ${calc.totalSum} руб. (по ${calc.finalPricePerItem} руб/шт)`;
             } else {
                 btn.style.display = 'none';
             }
         }
 
+        // УПРОЩЕННОЕ ОТКРЫТИЕ ОКНА
         function openMetroModal() {
-            if (cart.length === 0) return;
+            if (cart.length === 0) {
+                alert("Корзина пуста!");
+                return;
+            }
             document.getElementById('metro-dialog').showModal();
         }
 
@@ -182,29 +213,26 @@
             var clientName = user ? (user.username ? "@" + user.username : user.first_name) : "Неизвестный";
             var clientId = user ? user.id : "Нет ID";
 
+            const calc = calculateCart();
             let itemsText = "";
-            let totalSum = 0;
-            
             const groupedCart = {};
+            
             cart.forEach(item => {
-                if (groupedCart[item.name]) {
-                    groupedCart[item.name].count += 1;
-                } else {
-                    groupedCart[item.name] = { price: item.price, count: 1 };
-                }
+                const key = `${item.brand} [${item.flavor}]`;
+                if (groupedCart[key]) groupedCart[key] += 1;
+                else groupedCart[key] = 1;
             });
 
-            for (const [name, data] of Object.entries(groupedCart)) {
-                itemsText += `${name} - ${data.count} шт. (${data.price * data.count} руб.)\n`;
-                totalSum += data.price * data.count;
+            for (const [name, count] of Object.entries(groupedCart)) {
+                itemsText += `${name} - ${count} шт.\n`;
             }
 
-            var textForAdmin = `🔥 Новый заказ (Опт)!\n\n${itemsText}\n💰 Итого: ${totalSum} руб.\n🚇 Метро: ${metroStation}\n👤 Клиент: ${clientName}\nID: ${clientId}`;
+            var textForAdmin = `🔥 Новый заказ!\n\n${itemsText}\n📦 Всего: ${calc.totalItems} шт.\n💰 Итого: ${calc.totalSum} руб. (по ${calc.finalPricePerItem} руб/шт)\n🚇 Метро: ${metroStation}\n👤 Клиент: ${clientName}\nID: ${clientId}`;
             var urlAdmin = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + adminId + "&text=" + encodeURIComponent(textForAdmin);
             fetch(urlAdmin);
             
             if (user && user.id) {
-                var textForClient = `✅ Спасибо за заказ!\nВы выбрали:\n${itemsText}\nИтого: ${totalSum} руб.\n🚇 Станция метро: ${metroStation}\nОжидайте сообщения от менеджера.`;
+                var textForClient = `✅ Спасибо за заказ!\nВы выбрали:\n${itemsText}\n📦 Всего: ${calc.totalItems} шт.\n💰 Итого: ${calc.totalSum} руб.\n🚇 Станция метро: ${metroStation}\nОжидайте сообщения от менеджера.`;
                 var urlClient = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + user.id + "&text=" + encodeURIComponent(textForClient);
                 fetch(urlClient);
             }
