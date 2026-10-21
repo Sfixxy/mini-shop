@@ -9,17 +9,19 @@
         .card { background: rgba(255,255,255,0.2); padding: 15px; margin-bottom: 15px; border-radius: 8px; }
         h3 { margin-top: 0; margin-bottom: 5px; }
         p { margin-top: 0; margin-bottom: 10px; font-weight: bold; color: #ffd700; }
-        select { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: none; font-size: 16px; }
-        button { background: #ff6b6b; color: white; padding: 10px; border: none; border-radius: 5px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; }
         
         /* Вкладки (Табы) */
         .tabs { display: flex; gap: 5px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
         .tab-btn { flex: 1; background: rgba(255,255,255,0.1); color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; white-space: nowrap; }
         .tab-btn.active { background: #ffd700; color: #333; font-weight: bold; }
         
-        /* Кнопки складов */
-        .store-btn { display: block; background: #ff6b6b; color: white; text-align: center; padding: 10px; border-radius: 5px; text-decoration: none; font-size: 14px; font-weight: bold; margin-bottom: 5px;}
-        .store-btn:hover { background: #ff5252; }
+        /* Сетка для галочек с вкусами */
+        .flavors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; max-height: 300px; overflow-y: auto; padding-right: 5px; }
+        .flavor-checkbox { display: flex; align-items: center; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 5px; cursor: pointer; font-size: 13px; }
+        .flavor-checkbox input { margin-right: 8px; transform: scale(1.2); cursor: pointer; }
+        
+        button { background: #ff6b6b; color: white; padding: 10px; border: none; border-radius: 5px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #ff5252; }
         
         #checkout-btn {
             position: fixed; bottom: 0; left: 0; width: 100%; background: #28a745;
@@ -31,26 +33,24 @@
         dialog { border: none; border-radius: 12px; padding: 20px; background: #fff; color: #333; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); max-height: 80vh; overflow-y: auto; }
         dialog::backdrop { background: rgba(0, 0, 0, 0.7); }
         dialog h3 { margin-top: 0; color: #333; }
-        dialog select { border: 1px solid #ccc; background: #f9f9f9; color: #333; margin-top: 10px; }
+        dialog select { width: 100%; border: 1px solid #ccc; background: #f9f9f9; color: #333; margin-top: 10px; padding: 10px; border-radius: 5px; }
         dialog button { background: #28a745; margin-top: 10px; }
         dialog .cancel-btn { background: #ccc; color: #333; margin-top: 5px; }
     </style>
 </head>
 <body>
-    <h2>Магазин</h2>
+    <h2>Оптовый Магазин</h2>
 
     <!-- Вкладки выбора объема -->
     <div class="tabs">
-        <button class="tab-btn active" onclick="changeTab('10')">от 10 шт</button>
-        <button class="tab-btn" onclick="changeTab('30')">от 30 шт</button>
-        <button class="tab-btn" onclick="changeTab('50')">от 50 шт</button>
-        <button class="tab-btn" onclick="changeTab('100')">от 100 шт</button>
+        <button class="tab-btn active" onclick="changeTab('10', event)">от 10 шт</button>
+        <button class="tab-btn" onclick="changeTab('30', event)">от 30 шт</button>
+        <button class="tab-btn" onclick="changeTab('50', event)">от 50 шт</button>
+        <button class="tab-btn" onclick="changeTab('100', event)">от 100 шт</button>
     </div>
 
-    <!-- Блок с товарами (он будет меняться при нажатии на вкладки) -->
-    <div id="product-container">
-        <!-- Сюда скрипт будет вставлять карточки -->
-    </div>
+    <!-- Блок с товарами -->
+    <div id="product-container"></div>
 
     <!-- Плавающая кнопка заказа -->
     <button id="checkout-btn" onclick="openMetroModal()">🛒 Оформить заказ</button>
@@ -63,35 +63,12 @@
             <option value="" disabled selected>--- Выберите станцию ---</option>
             <optgroup label="🔴 Красная линия">
                 <option value="Малиновка">Малиновка</option>
-                <option value="Петровщина">Петровщина</option>
-                <option value="Михалово">Михалово</option>
-                <option value="Грушевка">Грушевка</option>
-                <option value="Институт культуры">Институт культуры</option>
-                <option value="Площадь Ленина">Площадь Ленина</option>
-                <option value="Октябрьская">Октябрьская</option>
-                <option value="Площадь Победы">Площадь Победы</option>
-                <option value="Площадь Якуба Коласа">Площадь Якуба Коласа</option>
-                <option value="Академия наук">Академия наук</option>
-                <option value="Парк Челюскинцев">Парк Челюскинцев</option>
-                <option value="Московская">Московская</option>
-                <option value="Восток">Восток</option>
-                <option value="Борисовский тракт">Борисовский тракт</option>
                 <option value="Уручье">Уручье</option>
+                <option value="Восток">Восток</option>
             </optgroup>
             <optgroup label="🔵 Синяя линия">
                 <option value="Каменная Горка">Каменная Горка</option>
                 <option value="Кунцевщина">Кунцевщина</option>
-                <option value="Спортивная">Спортивная</option>
-                <option value="Пушкинская">Пушкинская</option>
-                <option value="Молодёжная">Молодёжная</option>
-                <option value="Фрунзенская">Фрунзенская</option>
-                <option value="Немига">Немига</option>
-                <option value="Купаловская">Купаловская</option>
-                <option value="Первомайская">Первомайская</option>
-                <option value="Пролетарская">Пролетарская</option>
-                <option value="Тракторный завод">Тракторный завод</option>
-                <option value="Партизанская">Партизанская</option>
-                <option value="Автозаводская">Автозаводская</option>
                 <option value="Могилёвская">Могилёвская</option>
             </optgroup>
         </select>
@@ -104,72 +81,76 @@
         window.Telegram.WebApp.expand();
 
         let cart = [];
-        let currentTab = '10'; // По умолчанию открыта вкладка "от 10 шт"
+        let currentTab = '10';
 
-        // === НАСТРОЙКИ ТОВАРОВ И ЦЕН ===
-        // Здесь ты можешь менять цены для каждого объема
+        // === НАСТРОЙКИ ЦЕН ПО ОПТУ ===
         const PRICES = {
-            '10': 15,  // Цена при заказе от 10 шт
-            '30': 14,  // Цена при заказе от 30 шт
-            '50': 13,  // Цена при заказе от 50 шт
-            '100': 12  // Цена при заказе от 100 шт
+            '10': 15,  
+            '30': 14,  
+            '50': 13,  
+            '100': 12  
         };
 
-        // Вкусы (остаются одинаковыми для всех вкладок)
-        const catswillFlavors = [
+        // Все вкусы из твоего списка
+        const flavorsList = [
             "Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", 
             "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", 
             "Лайм", "Банан", "Кокос", "Мята", "Ментол", "Мятный лимонад", "Мохито", "Кола", 
             "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"
         ];
 
-        // Функция переключения вкладок
-        function changeTab(tab) {
+        function changeTab(tab, event) {
             currentTab = tab;
-            
-            // Меняем активную кнопку
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-
-            // Перерисовываем товары
             renderProducts();
         }
 
-        // Функция отрисовки товаров
         function renderProducts() {
             const container = document.getElementById('product-container');
-            container.innerHTML = ''; // Очищаем старое
-
             const currentPrice = PRICES[currentTab];
 
-            // Создаем карточку Catswill
-            let options = catswillFlavors.map(f => `<option value="${f}">${f}</option>`).join('');
+            // Генерируем сетку с чекбоксами
+            let checkboxesHTML = flavorsList.map((flavor, index) => `
+                <label class="flavor-checkbox">
+                    <input type="checkbox" value="${flavor}" id="flavor_${index}">
+                    ${flavor}
+                </label>
+            `).join('');
 
             container.innerHTML = `
                 <div class="card">
-                    <h3>🐱 Catswill (Опт)</h3>
+                    <h3>🐱 Выбор вкусов (Опт)</h3>
                     <p>Цена за 1 шт: ${currentPrice} руб.</p>
-                    <select id="catswill-flavor">
-                        <option value="" disabled selected>--- Выберите вкус ---</option>
-                        ${options}
-                    </select>
-                    <button onclick="addToCart('Catswill', ${currentPrice}, 'catswill-flavor')">➕ В корзину</button>
+                    <div class="flavors-grid">
+                        ${checkboxesHTML}
+                    </div>
+                    <button onclick="addSelectedToCart(${currentPrice})">➕ Добавить выбранные в корзину</button>
                 </div>
             `;
         }
 
-        // Добавление в корзину
-        function addToCart(name, price, selectId) {
-            const selectElement = document.getElementById(selectId);
-            if (!selectElement.value) {
-                alert("⚠️ Пожалуйста, выберите вкус!");
+        // Функция добавления ВСЕХ выбранных вкусов
+        function addSelectedToCart(price) {
+            const checkboxes = document.querySelectorAll('.flavor-checkbox input:checked');
+            
+            if (checkboxes.length === 0) {
+                alert("⚠️ Пожалуйста, отметьте галочками нужные вкусы!");
                 return;
             }
 
-            let finalName = name + " [" + selectElement.value + "]";
-            cart.push({ name: finalName, price: price });
+            let addedCount = 0;
+            checkboxes.forEach(checkbox => {
+                // Добавляем каждый выбранный вкус как отдельный товар
+                cart.push({ name: "Catswill [" + checkbox.value + "]", price: price });
+                addedCount++;
+            });
+
+            // Снимаем галочки после добавления (чтобы не добавить дважды случайно)
+            checkboxes.forEach(cb => cb.checked = false);
+
             updateCheckoutBtn();
-            alert("Товар добавлен в корзину!");
+            alert(`✅ Добавлено в корзину: ${addedCount} шт.`);
         }
 
         function updateCheckoutBtn() {
@@ -193,14 +174,11 @@
         }
 
         function confirmCheckout() {
-            const metroSelect = document.getElementById('metro-station');
-            const selectedMetro = metroSelect.value;
-
+            const selectedMetro = document.getElementById('metro-station').value;
             if (!selectedMetro) {
                 alert("⚠️ Пожалуйста, выберите станцию метро!");
                 return;
             }
-
             closeMetroModal();
             sendOrder(selectedMetro);
         }
@@ -215,10 +193,21 @@
 
             let itemsText = "";
             let totalSum = 0;
-            cart.forEach((item, index) => {
-                itemsText += `${index + 1}. ${item.name} - ${item.price} руб.\n`;
-                totalSum += item.price;
+            
+            // Группируем одинаковые вкусы для удобства чтения
+            const groupedCart = {};
+            cart.forEach(item => {
+                if (groupedCart[item.name]) {
+                    groupedCart[item.name].count += 1;
+                } else {
+                    groupedCart[item.name] = { price: item.price, count: 1 };
+                }
             });
+
+            for (const [name, data] of Object.entries(groupedCart)) {
+                itemsText += `${name} - ${data.count} шт. (${data.price * data.count} руб.)\n`;
+                totalSum += data.price * data.count;
+            }
 
             var textForAdmin = `🔥 Новый заказ (Опт)!\n\n${itemsText}\n💰 Итого: ${totalSum} руб.\n🚇 Метро: ${metroStation}\n👤 Клиент: ${clientName}\nID: ${clientId}`;
             var urlAdmin = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + adminId + "&text=" + encodeURIComponent(textForAdmin);
@@ -235,7 +224,7 @@
             updateCheckoutBtn();
         }
 
-        // Запускаем отрисовку при загрузке страницы
+        // Запускаем при загрузке
         renderProducts();
     </script>
 </body>
