@@ -161,13 +161,29 @@
         // Твой ID (для админки)
         const ADMIN_ID = 5569005187; 
         
-        // Загружаем сохраненные остатки из памяти
-        let inStock = JSON.parse(localStorage.getItem('vape_stock')) || {};
+                // Загружаем сохраненные остатки из памяти
+        let inStock = {};
 
-        // Показываем кнопку админа только тебе
-        if (user && user.id === ADMIN_ID) {
-            document.getElementById('admin-panel-btn').style.display = 'block';
+        // Функция инициализации (запускается, когда Telegram полностью прогрузился)
+        function initApp() {
+            // Читаем память ТОЛЬКО после загрузки
+            inStock = JSON.parse(localStorage.getItem('vape_stock')) || {};
+
+            // Показываем кнопку админа только тебе
+            if (user && user.id === ADMIN_ID) {
+                document.getElementById('admin-panel-btn').style.display = 'block';
+            }
+
+            // Запускаем отрисовку
+            render();
         }
+
+        // Говорим Telegram: "Когда будешь готов, запусти initApp"
+        window.Telegram.WebApp.onEvent('themeChanged', initApp);
+        window.Telegram.WebApp.ready();
+        
+        // Запускаем на всякий случай с небольшой задержкой
+        setTimeout(initApp, 100);
 
         // ИСПРАВЛЕННЫЕ СТАНЦИИ
         const lines = {
