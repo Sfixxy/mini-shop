@@ -16,7 +16,7 @@
         .tab-btn.active { background: #ffd700; color: #333; font-weight: bold; }
         
         /* Сетка для галочек с вкусами */
-        .flavors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; max-height: 300px; overflow-y: auto; padding-right: 5px; }
+        .flavors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
         .flavor-checkbox { display: flex; align-items: center; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 5px; cursor: pointer; font-size: 13px; }
         .flavor-checkbox input { margin-right: 8px; transform: scale(1.2); cursor: pointer; }
         
@@ -91,13 +91,12 @@
             '100': 12  
         };
 
-        // Все вкусы из твоего списка
-        const flavorsList = [
-            "Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", 
-            "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", 
-            "Лайм", "Банан", "Кокос", "Мята", "Ментол", "Мятный лимонад", "Мохито", "Кола", 
-            "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"
-        ];
+        // === СПИСКИ ВКУСОВ ===
+        const catswillFlavors = ["Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", "Лайм", "Банан", "Кокос", "Мята", "Ментол", "Мятный лимонад", "Мохито", "Кола", "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"];
+        
+        const monashkaFlavors = ["Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", "Лайм", "Банан", "Кокос", "Лесные ягоды", "Чёрная смородина", "Красная смородина", "Крыжовник", "Брусника", "Ice Grape", "Ice Strawberry", "Ice Peach", "Ice Mango", "Ice Watermelon", "Ice Melon", "Ice Black Currant", "Ice Lime", "Ice Mojito", "Ice Cola", "Ice Energy", "Кислая вишня", "Кислое яблоко", "Кислый арбуз", "Кислый мармелад", "Голубая малина", "Мята", "Ментол", "Лимонады", "Мохито", "Кола", "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"];
+        
+        const podonkiFlavors = ["Яблоко (Apple)", "Груша (Pear)", "Клубника (Strawberry)", "Персик (Peach)", "Виноград (Grape)", "Арбуз (Watermelon)", "Дыня (Melon)", "Манго (Mango)", "Ананас (Pineapple)", "Вишня (Cherry)", "Лимон (Lemon)", "Апельсин (Orange)", "Малина (Raspberry)", "Черника (Blueberry)", "Банан (Banana)", "Кокос (Coconut)", "Мята (Mint)", "Ледяная мята (Ice Mint)", "Ментол (Menthol)", "Табак (Tobacco)", "Кофе (Coffee)", "Шоколад (Chocolate)", "Карамель (Caramel)", "Ваниль (Vanilla)", "Кислый мармелад (Sour Gummy)", "Кислая вишня (Sour Cherry)", "Кислое яблоко (Sour Apple)", "Кислый арбуз (Sour Watermelon)", "Ледяной виноград (Ice Grape)", "Ледяная клубника (Ice Strawberry)", "Ледяной персик (Ice Peach)", "Ледяной манго (Ice Mango)", "Ледяной ананас (Ice Pineapple)", "Ледяная дыня (Ice Melon)", "Ледяной арбуз (Ice Watermelon)", "Мятный лимонад (Mint Lemonade)", "Клубничный лимонад (Strawberry Lemonade)", "Малиновый лимонад (Raspberry Lemonade)", "Голубая малина (Blue Raspberry)", "Ежевика (Blackberry)", "Киви (Kiwi)", "Маракуйя (Passion Fruit)", "Гранат (Pomegranate)", "Лайм (Lime)", "Кола (Cola)", "Энергетик (Energy Drink)", "Йогурт (Yogurt)", "Крем-сода (Cream Soda)", "Мохито (Mojito)"];
 
         function changeTab(tab, event) {
             currentTab = tab;
@@ -106,51 +105,64 @@
             renderProducts();
         }
 
-        function renderProducts() {
-            const container = document.getElementById('product-container');
-            const currentPrice = PRICES[currentTab];
-
-            // Генерируем сетку с чекбоксами
-            let checkboxesHTML = flavorsList.map((flavor, index) => `
+        // Функция, которая создает карточку с галочками для конкретной марки
+        function createBrandCard(brandName, flavors) {
+            let checkboxesHTML = flavors.map((flavor, index) => `
                 <label class="flavor-checkbox">
-                    <input type="checkbox" value="${flavor}" id="flavor_${index}">
+                    <input type="checkbox" value="${flavor}" id="${brandName.replace(/\s/g, '')}_${index}">
                     ${flavor}
                 </label>
             `).join('');
 
-            container.innerHTML = `
+            return `
                 <div class="card">
-                    <h3>🐱 Выбор вкусов (Опт)</h3>
-                    <p>Цена за 1 шт: ${currentPrice} руб.</p>
+                    <h3>${brandName} (Опт)</h3>
+                    <p>Цена за 1 шт: ${PRICES[currentTab]} руб.</p>
                     <div class="flavors-grid">
                         ${checkboxesHTML}
                     </div>
-                    <button onclick="addSelectedToCart(${currentPrice})">➕ Добавить выбранные в корзину</button>
+                    <button onclick="addSelectedToCart('${brandName}', ${PRICES[currentTab]})">➕ Добавить выбранные</button>
                 </div>
             `;
         }
 
-        // Функция добавления ВСЕХ выбранных вкусов
-        function addSelectedToCart(price) {
-            const checkboxes = document.querySelectorAll('.flavor-checkbox input:checked');
+        function renderProducts() {
+            const container = document.getElementById('product-container');
+            
+            // Собираем все карточки вместе
+            container.innerHTML = 
+                createBrandCard('🐱 Catswill', catswillFlavors) +
+                createBrandCard('👧 Монашка', monashkaFlavors) +
+                createBrandCard('🔹 Podonki', podonkiFlavors);
+        }
+
+        // Добавление выбранных вкусов в корзину
+        function addSelectedToCart(brandName, price) {
+            // Ищем все отмеченные чекбоксы ТОЛЬКО внутри бренда (по префиксу ID)
+            const prefix = brandName.replace(/\s/g, '').replace(/[^\w]/g, '') + '_';
+            const allChecked = document.querySelectorAll('.flavor-checkbox input:checked');
+            
+            let checkboxes = [];
+            allChecked.forEach(cb => {
+                if (cb.id.startsWith(prefix)) {
+                    checkboxes.push(cb);
+                }
+            });
             
             if (checkboxes.length === 0) {
-                alert("⚠️ Пожалуйста, отметьте галочками нужные вкусы!");
+                alert(`⚠️ Отметьте вкусы для ${brandName}!`);
                 return;
             }
 
             let addedCount = 0;
             checkboxes.forEach(checkbox => {
-                // Добавляем каждый выбранный вкус как отдельный товар
-                cart.push({ name: "Catswill [" + checkbox.value + "]", price: price });
+                cart.push({ name: brandName + " [" + checkbox.value + "]", price: price });
                 addedCount++;
+                checkbox.checked = false; // Снимаем галочку
             });
 
-            // Снимаем галочки после добавления (чтобы не добавить дважды случайно)
-            checkboxes.forEach(cb => cb.checked = false);
-
             updateCheckoutBtn();
-            alert(`✅ Добавлено в корзину: ${addedCount} шт.`);
+            alert(`✅ Добавлено в корзину: ${addedCount} шт. (${brandName})`);
         }
 
         function updateCheckoutBtn() {
@@ -194,7 +206,6 @@
             let itemsText = "";
             let totalSum = 0;
             
-            // Группируем одинаковые вкусы для удобства чтения
             const groupedCart = {};
             cart.forEach(item => {
                 if (groupedCart[item.name]) {
@@ -224,7 +235,7 @@
             updateCheckoutBtn();
         }
 
-        // Запускаем при загрузке
+        // Запускаем отрисовку
         renderProducts();
     </script>
 </body>
