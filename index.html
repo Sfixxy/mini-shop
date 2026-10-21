@@ -149,6 +149,9 @@
     <script>
         window.Telegram.WebApp.ready();
         
+        // Получаем данные пользователя Telegram
+        const user = window.Telegram.WebApp.initDataUnsafe?.user;
+        
         let cart = [];
         let currentTab = '10';
         let selectedStation = "";
@@ -162,7 +165,6 @@
         let inStock = JSON.parse(localStorage.getItem('vape_stock')) || {};
 
         // Показываем кнопку админа только тебе
-        const user = window.Telegram.WebApp.initDataUnsafe?.user;
         if (user && user.id === ADMIN_ID) {
             document.getElementById('admin-panel-btn').style.display = 'block';
         }
@@ -425,9 +427,11 @@
             localStorage.setItem('vape_stock', JSON.stringify(newStock));
             inStock = newStock;
 
-            alert("✅ Настройки наличия сохранены!");
+            alert("✅ Настройки наличия сохранены! Страница сейчас обновится.");
             closeAdminPanel();
-            render();
+            
+            // Перезагружаем страницу, чтобы товары сразу исчезли
+            window.location.reload(); 
         }
 
         render();
