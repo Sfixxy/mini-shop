@@ -8,10 +8,10 @@
         /* ТЕМНАЯ ТЕМА (Вейп-Шоп) */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: #0f0f13; /* Глубокий темный фон */
+            background: #0f0f13; 
             color: #e0e0e0; 
             padding: 15px; 
-            padding-bottom: 100px; 
+            padding-bottom: 120px; 
             margin: 0; 
         }
         
@@ -56,7 +56,14 @@
             cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(179, 102, 255, 0.2);
         }
         button:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(179, 102, 255, 0.4); }
-        button:active { transform: translateY(0); }
+        
+        /* Блок КОРЗИНЫ */
+        #cart-section { display: none; background: #1c1c24; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2a2a35; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #333; font-size: 14px; }
+        .cart-item:last-child { border-bottom: none; }
+        .delete-btn { background: #e74c3c; color: white; border: none; border-radius: 5px; padding: 5px 10px; font-size: 12px; width: auto; cursor: pointer; box-shadow: none; }
+        .delete-btn:hover { background: #c0392b; transform: none; box-shadow: none; }
+        .clear-cart-btn { background: #444; color: #fff; margin-top: 10px; padding: 10px; font-size: 14px; }
         
         /* Главная кнопка заказа */
         #checkout-btn {
@@ -71,7 +78,6 @@
         .line-btn { padding: 12px; border: none; border-radius: 8px; color: white; font-weight: bold; margin-bottom: 8px; width: 100%; cursor: pointer; transition: 0.2s; }
         .line-btn:hover { opacity: 0.9; }
         
-        /* ЦВЕТА ВЕТОК */
         .red { background: #e74c3c; }
         .blue { background: #3498db; }
         .green { background: #2ecc71; }
@@ -99,11 +105,18 @@
 
     <div id="product-container"></div>
 
+    <!-- БЛОК КОРЗИНЫ -->
+    <div id="cart-section">
+        <h3 style="color: #00ffff; font-size: 16px; margin-bottom: 10px;">🛒 Ваша корзина:</h3>
+        <div id="cart-list"></div>
+        <button class="clear-cart-btn" onclick="clearCart()">🗑 Очистить всё</button>
+    </div>
+
     <!-- Блок выбора метро -->
     <div id="metro-section">
         <h3 style="margin-top: 0; color: #fff;">🚇 Выберите ветку:</h3>
-        <button class="line-btn blue" onclick="showLine('blue')"> 🔵Синяя ветка</button>
-        <button class="line-btn red" onclick="showLine('red')"> 🔴 Красная ветка</button>
+        <button class="line-btn red" onclick="showLine('red')">🔴 Красная ветка</button>
+        <button class="line-btn blue" onclick="showLine('blue')">🔵 Синяя ветка</button>
         <button class="line-btn green" onclick="showLine('green')">🟢 Зеленая ветка</button>
         
         <div id="stations-list"></div>
@@ -117,16 +130,17 @@
         let cart = [];
         let currentTab = '10';
         let selectedStation = "";
+        
+        // Твои новые цены
         const PRICES = { '10': 15, '30': 14, '50': 13, '100': 12 };
 
-        // === СТАНЦИИ СТРОГО ПО ВЕТКАМ ===
+        // Твои исправленные станции
         const lines = {
             blue: ["Малиновка", "Петровщина", "Михалово", "Грушевка", "Институт культуры", "Площадь Ленина", "Октябрьская", "Площадь Победы", "Площадь Якуба Коласа", "Академия наук", "Парк Челюскинцев", "Московская", "Восток", "Борисовский тракт", "Уручье"],
             red: ["Каменная Горка", "Кунцевщина", "Спортивная", "Пушкинская", "Молодёжная", "Фрунзенская", "Немига", "Купаловская", "Первомайская", "Пролетарская", "Тракторный завод", "Партизанская", "Автозаводская", "Могилёвская"],
             green: ["Слуцкий Гостинец", "Новаторская", "Вокзальная", "Ковальская Слобода", "Юбилейная площадь"]
         };
 
-        // Вкусы
         const flavorsData = {
             catswill: { name: "🐱 Catswill", list: ["Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", "Лайм", "Банан", "Кокос", "Мята", "Ментол", "Мятный лимонад", "Мохито", "Кола", "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"] },
             monashka: { name: "👧 Монашка", list: ["Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", "Лайм", "Банан", "Кокос", "Лесные ягоды", "Чёрная смородина", "Красная смородина", "Крыжовник", "Брусника", "Ice Grape", "Ice Strawberry", "Ice Peach", "Ice Mango", "Ice Watermelon", "Ice Melon", "Ice Black Currant", "Ice Lime", "Ice Mojito", "Ice Cola", "Ice Energy", "Кислая вишня", "Кислое яблоко", "Кислый арбуз", "Кислый мармелад", "Голубая малина", "Мята", "Ментол", "Лимонады", "Мохито", "Кола", "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"] },
@@ -174,24 +188,57 @@
                 cart.push({ brand: flavorsData[brandKey].name, flavor: cb.value });
                 cb.checked = false;
             });
-            updateBtn();
+            updateUI();
             alert("Добавлено!");
         }
 
-        function updateBtn() {
+        // === ОЧИСТКА И УДАЛЕНИЕ ===
+        function removeItem(index) {
+            cart.splice(index, 1); 
+            updateUI();
+        }
+
+        function clearCart() {
+            if(confirm("Вы уверены, что хотите очистить всю корзину?")) {
+                cart = [];
+                updateUI();
+            }
+        }
+
+        function updateUI() {
             const btn = document.getElementById('checkout-btn');
+            const cartSection = document.getElementById('cart-section');
+            const cartList = document.getElementById('cart-list');
+
             if (cart.length > 0) {
+                // Твой пересчет цен
                 let price = 15;
                 if (cart.length >= 100) price = 11;
                 else if (cart.length >= 50) price = 12;
                 else if (cart.length >= 30) price = 13;
                 else if (cart.length >= 10) price = 14;
-                
+
                 let total = cart.length * price;
+
                 btn.style.display = 'block';
                 btn.innerText = `🛒 Оформить (${cart.length} шт.) на ${total} руб.`;
+
+                cartSection.style.display = 'block';
+                cartList.innerHTML = ''; 
+
+                cart.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'cart-item';
+                    div.innerHTML = `
+                        <span>${item.brand} - ${item.flavor}</span>
+                        <button class="delete-btn" onclick="removeItem(${index})">❌</button>
+                    `;
+                    cartList.appendChild(div);
+                });
+
             } else {
                 btn.style.display = 'none';
+                cartSection.style.display = 'none';
             }
         }
 
@@ -231,11 +278,11 @@
             const adminId = "5569005187";
             let user = window.Telegram.WebApp.initDataUnsafe?.user;
             
-            let price = 16;
-            if (cart.length >= 100) price = 12;
-            else if (cart.length >= 50) price = 13;
-            else if (cart.length >= 30) price = 14;
-            else if (cart.length >= 10) price = 15;
+            let price = 15;
+            if (cart.length >= 100) price = 11;
+            else if (cart.length >= 50) price = 12;
+            else if (cart.length >= 30) price = 13;
+            else if (cart.length >= 10) price = 14;
             let total = cart.length * price;
 
             let items = {};
