@@ -189,13 +189,26 @@
                     </label>
                 `).join('');
 
-                box.innerHTML += `
-                    <div class="card">
-                        <h3>${brand.name}</h3>
-                        <p>Цена: ${PRICES[currentTab]} руб/шт</p>
-                        <div class="flavors-grid">${checks}</div>
-                        <button onclick="addBrandToCart('${key}')">➕ Добавить выбранные</button>
-                    </div>
+               // Массив с картинками для каждой марки
+const brandImages = {
+    catswill: "https://i.ibb.co/6PZ9Z9Z/catswill.jpg", // Замени на свои ссылки
+    monashka: "https://i.ibb.co/6PZ9Z9Z/monashka.jpg",
+    podonki: "https://i.ibb.co/6PZ9Z9Z/podonki.jpg"
+};
+
+// ... (внутри функции render)
+box.innerHTML += `
+    <div class="card">
+        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <img src="${brandImages[key]}" style="width: 50px; height: 50px; border-radius: 8px; margin-right: 15px; object-fit: cover;" alt="${brand.name}">
+            <div>
+                <h3 style="margin: 0;">${brand.name}</h3>
+                <p style="margin: 0;">Цена: ${PRICES[currentTab]} руб/шт</p>
+            </div>
+        </div>
+        <div class="flavors-grid">${checks}</div>
+        <button onclick="addBrandToCart('${key}')">➕ Добавить выбранные</button>
+    </div>
                 `;
             }
         }
@@ -276,7 +289,12 @@
         }
 
         function toggleMetro() {
-            const sec = document.getElementById('metro-section');
+            if (cart.length === 0) {
+        alert("Ваша корзина пуста. Добавьте товары!");
+        return;
+    }
+    
+    const sec = document.getElementById('metro-section');
             if (sec.style.display === 'none' || sec.style.display === '') {
                 sec.style.display = 'block';
                 document.getElementById('checkout-btn').innerText = "✅ Подтвердить заказ";
