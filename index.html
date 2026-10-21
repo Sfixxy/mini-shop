@@ -7,45 +7,67 @@
     <style>
         body { font-family: Arial; background: #667eea; color: white; padding: 20px; }
         .card { background: rgba(255,255,255,0.2); padding: 15px; margin-bottom: 10px; border-radius: 8px; }
-        button { background: red; color: white; padding: 10px; border: none; border-radius: 5px; width: 100%; font-size: 16px; }
+        h3 { margin-top: 0; margin-bottom: 5px; }
+        p { margin-top: 0; margin-bottom: 10px; }
+        select { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: none; font-size: 16px; }
+        button { background: red; color: white; padding: 10px; border: none; border-radius: 5px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
     <h2>Магазин</h2>
     
+    <!-- Карточка с картриджем -->
+    <div class="card">
+        <h3>Картридж Xros</h3>
+        <p>Цена: 400 руб.</p>
+        
+        <!-- Выпадающий список -->
+        <select id="xros-resistance">
+            <option value="0.4 Ом">Сопротивление: 0.4 Ом</option>
+            <option value="0.6 Ом">Сопротивление: 0.6 Ом</option>
+            <option value="0.7 Ом">Сопротивление: 0.7 Ом</option>
+            <option value="0.8 Ом">Сопротивление: 0.8 Ом</option>
+        </select>
+
+        <button onclick="buyXros()">КУПИТЬ</button>
+    </div>
+
+    <!-- Старая карточка (оставил для примера, можешь удалить) -->
     <div class="card">
         <h3>Футболка</h3>
         <p>1500 руб.</p>
         <button onclick="sendOrder('Футболка', 1500)">КУПИТЬ</button>
     </div>
 
-    <div class="card">
-        <h3>Кружка</h3>
-        <p>800 руб.</p>
-        <button onclick="sendOrder('Кружка', 800)">КУПИТЬ</button>
-    </div>
-
     <script>
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
 
+        // Функция для картриджа (считывает выбранное сопротивление)
+        function buyXros() {
+            var selectedResistance = document.getElementById("xros-resistance").value;
+            var productName = "Картридж Xros (" + selectedResistance + ")";
+            sendOrder(productName, 400);
+        }
+
+        // Основная функция отправки заказа
         function sendOrder(item, price) {
             var token = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA";
             var adminId = "5569005187";
             
-            // 1. Отправляем заказ тебе
-                        var user = window.Telegram.WebApp.initDataUnsafe ? window.Telegram.WebApp.initDataUnsafe.user : null;
+            var user = window.Telegram.WebApp.initDataUnsafe ? window.Telegram.WebApp.initDataUnsafe.user : null;
             var clientName = user ? (user.username ? "@" + user.username : user.first_name) : "Неизвестный";
-            var textForAdmin = "Заказ: " + item + " за " + price + " руб.\nКлиент: " + clientName;
+            var clientId = user ? user.id : "Нет ID";
+
+            // Текст для тебя
+            var textForAdmin = "🔥 Новый заказ!\nТовар: " + item + "\nЦена: " + price + " руб.\nКлиент: " + clientName + "\nID: " + clientId;
             var urlAdmin = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + adminId + "&text=" + encodeURIComponent(textForAdmin);
             fetch(urlAdmin);
             
-            // 2. Пытаемся отправить клиенту (если он в Telegram)
-            var user = window.Telegram.WebApp.initDataUnsafe.user;
+            // Текст для клиента
             if (user && user.id) {
-                var clientId = user.id;
-                var textForClient = "Спасибо! Вы купили " + item + ".";
-                var urlClient = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + clientId + "&text=" + encodeURIComponent(textForClient);
+                var textForClient = "✅ Спасибо! Вы купили: " + item + ". Ожидайте сообщения от менеджера.";
+                var urlClient = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + user.id + "&text=" + encodeURIComponent(textForClient);
                 fetch(urlClient);
             }
             
