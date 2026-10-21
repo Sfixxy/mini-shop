@@ -12,6 +12,15 @@
         select { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: none; font-size: 16px; }
         button { background: #ff6b6b; color: white; padding: 10px; border: none; border-radius: 5px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; }
         
+        /* Вкладки (Табы) */
+        .tabs { display: flex; gap: 5px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn { flex: 1; background: rgba(255,255,255,0.1); color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; white-space: nowrap; }
+        .tab-btn.active { background: #ffd700; color: #333; font-weight: bold; }
+        
+        /* Кнопки складов */
+        .store-btn { display: block; background: #ff6b6b; color: white; text-align: center; padding: 10px; border-radius: 5px; text-decoration: none; font-size: 14px; font-weight: bold; margin-bottom: 5px;}
+        .store-btn:hover { background: #ff5252; }
+        
         #checkout-btn {
             position: fixed; bottom: 0; left: 0; width: 100%; background: #28a745;
             color: white; padding: 20px; font-size: 18px; border: none;
@@ -19,10 +28,7 @@
             z-index: 100;
         }
 
-        dialog {
-            border: none; border-radius: 12px; padding: 20px; background: #fff; color: #333;
-            width: 80%; max-width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
+        dialog { border: none; border-radius: 12px; padding: 20px; background: #fff; color: #333; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); max-height: 80vh; overflow-y: auto; }
         dialog::backdrop { background: rgba(0, 0, 0, 0.7); }
         dialog h3 { margin-top: 0; color: #333; }
         dialog select { border: 1px solid #ccc; background: #f9f9f9; color: #333; margin-top: 10px; }
@@ -32,295 +38,18 @@
 </head>
 <body>
     <h2>Магазин</h2>
-    
-    <!-- Картридж Xros -->
-    <div class="card">
-        <h3>Картридж Xros</h3>
-        <p>Цена: 13 руб.</p>
-        <select id="xros-resistance">
-            <option value="0.4 Ом">Сопротивление: 0.4 Ом</option>
-            <option value="0.6 Ом">Сопротивление: 0.6 Ом</option>
-            <option value="0.7 Ом">Сопротивление: 0.7 Ом</option>
-            <option value="0.8 Ом">Сопротивление: 0.8 Ом</option>
-        </select>
-        <button onclick="addToCart('Картридж Xros', 13, 'xros-resistance')">➕ В корзину</button>
+
+    <!-- Вкладки выбора объема -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="changeTab('10')">от 10 шт</button>
+        <button class="tab-btn" onclick="changeTab('30')">от 30 шт</button>
+        <button class="tab-btn" onclick="changeTab('50')">от 50 шт</button>
+        <button class="tab-btn" onclick="changeTab('100')">от 100 шт</button>
     </div>
 
-    <!-- Podonki V1 (Цена 15) -->
-    <div class="card">
-        <h3>🔹 Podonki V1</h3>
-        <p>Цена: 15 руб.</p>
-        <select id="v1-flavor">
-            <optgroup label="Фрукты и ягоды">
-                <option value="Яблоко (Apple)">Яблоко (Apple)</option>
-                <option value="Груша (Pear)">Груша (Pear)</option>
-                <option value="Клубника (Strawberry)">Клубника (Strawberry)</option>
-                <option value="Персик (Peach)">Персик (Peach)</option>
-                <option value="Виноград (Grape)">Виноград (Grape)</option>
-                <option value="Арбуз (Watermelon)">Арбуз (Watermelon)</option>
-                <option value="Дыня (Melon)">Дыня (Melon)</option>
-                <option value="Манго (Mango)">Манго (Mango)</option>
-                <option value="Ананас (Pineapple)">Ананас (Pineapple)</option>
-                <option value="Вишня (Cherry)">Вишня (Cherry)</option>
-                <option value="Лимон (Lemon)">Лимон (Lemon)</option>
-                <option value="Апельсин (Orange)">Апельсин (Orange)</option>
-                <option value="Малина (Raspberry)">Малина (Raspberry)</option>
-                <option value="Черника (Blueberry)">Черника (Blueberry)</option>
-                <option value="Банан (Banana)">Банан (Banana)</option>
-                <option value="Кокос (Coconut)">Кокос (Coconut)</option>
-            </optgroup>
-            <optgroup label="Особые вкусы">
-                <option value="Мята (Mint)">Мята (Mint)</option>
-                <option value="Ледяная мята (Ice Mint)">Ледяная мята (Ice Mint)</option>
-                <option value="Ментол (Menthol)">Ментол (Menthol)</option>
-                <option value="Табак (Tobacco)">Табак (Tobacco)</option>
-                <option value="Кофе (Coffee)">Кофе (Coffee)</option>
-                <option value="Шоколад (Chocolate)">Шоколад (Chocolate)</option>
-                <option value="Карамель (Caramel)">Карамель (Caramel)</option>
-                <option value="Ваниль (Vanilla)">Ваниль (Vanilla)</option>
-            </optgroup>
-        </select>
-        <button onclick="addToCart('Podonki V1', 15, 'v1-flavor')">➕ В корзину</button>
-    </div>
-
-    <!-- Podonki V2 (Цена 15) -->
-    <div class="card">
-        <h3>🔹 Podonki V2</h3>
-        <p>Цена: 15 руб.</p>
-        <select id="v2-flavor">
-            <optgroup label="Sour (Кислые)">
-                <option value="Кислый мармелад (Sour Gummy)">Кислый мармелад (Sour Gummy)</option>
-                <option value="Кислая вишня (Sour Cherry)">Кислая вишня (Sour Cherry)</option>
-                <option value="Кислое яблоко (Sour Apple)">Кислое яблоко (Sour Apple)</option>
-                <option value="Кислый арбуз (Sour Watermelon)">Кислый арбуз (Sour Watermelon)</option>
-            </optgroup>
-            <optgroup label="Ice (Ледяные)">
-                <option value="Ледяной виноград (Ice Grape)">Ледяной виноград (Ice Grape)</option>
-                <option value="Ледяная клубника (Ice Strawberry)">Ледяная клубника (Ice Strawberry)</option>
-                <option value="Ледяной персик (Ice Peach)">Ледяной персик (Ice Peach)</option>
-                <option value="Ледяной манго (Ice Mango)">Ледяной манго (Ice Mango)</option>
-                <option value="Ледяной ананас (Ice Pineapple)">Ледяной ананас (Ice Pineapple)</option>
-                <option value="Ледяная дыня (Ice Melon)">Ледяная дыня (Ice Melon)</option>
-                <option value="Ледяной арбуз (Ice Watermelon)">Ледяной арбуз (Ice Watermelon)</option>
-            </optgroup>
-            <optgroup label="Лимонады и миксы">
-                <option value="Мятный лимонад (Mint Lemonade)">Мятный лимонад (Mint Lemonade)</option>
-                <option value="Клубничный лимонад (Strawberry Lemonade)">Клубничный лимонад (Strawberry Lemonade)</option>
-                <option value="Малиновый лимонад (Raspberry Lemonade)">Малиновый лимонад (Raspberry Lemonade)</option>
-                <option value="Голубая малина (Blue Raspberry)">Голубая малина (Blue Raspberry)</option>
-            </optgroup>
-            <optgroup label="Экзотика и прочее">
-                <option value="Ежевика (Blackberry)">Ежевика (Blackberry)</option>
-                <option value="Киви (Kiwi)">Киви (Kiwi)</option>
-                <option value="Маракуйя (Passion Fruit)">Маракуйя (Passion Fruit)</option>
-                <option value="Гранат (Pomegranate)">Гранат (Pomegranate)</option>
-                <option value="Лайм (Lime)">Лайм (Lime)</option>
-                <option value="Кола (Cola)">Кола (Cola)</option>
-                <option value="Энергетик (Energy Drink)">Энергетик (Energy Drink)</option>
-                <option value="Йогурт (Yogurt)">Йогурт (Yogurt)</option>
-                <option value="Крем-сода (Cream Soda)">Крем-сода (Cream Soda)</option>
-                <option value="Мохито (Mojito)">Мохито (Mojito)</option>
-            </optgroup>
-        </select>
-        <button onclick="addToCart('Podonki V2', 15, 'v2-flavor')">➕ В корзину</button>
-    </div>
-
-    <!-- Podonki Last Hup (Цена 15) -->
-    <div class="card">
-        <h3>🔹 Podonki Last Hup</h3>
-        <p>Цена: 15 руб.</p>
-        <select id="lasthup-flavor">
-            <optgroup label="Ягоды и миксы">
-                <option value="Черная смородина (Black Currant)">Черная смородина (Black Currant)</option>
-                <option value="Красная смородина (Red Currant)">Красная смородина (Red Currant)</option>
-                <option value="Крыжовник (Gooseberry)">Крыжовник (Gooseberry)</option>
-                <option value="Брусника (Lingonberry)">Брусника (Lingonberry)</option>
-                <option value="Голубика (Blueberry)">Голубика (Blueberry)</option>
-                <option value="Малина-Ежевика (Raspberry-Blackberry)">Малина-Ежевика (Raspberry-Blackberry)</option>
-                <option value="Клубника-Банан (Strawberry-Banana)">Клубника-Банан (Strawberry-Banana)</option>
-                <option value="Манго-Маракуйя (Mango-Passion Fruit)">Манго-Маракуйя (Mango-Passion Fruit)</option>
-                <option value="Ананас-Кокос (Pineapple-Coconut)">Ананас-Кокос (Pineapple-Coconut)</option>
-                <option value="Арбуз-Дыня (Watermelon-Melon)">Арбуз-Дыня (Watermelon-Melon)</option>
-                <option value="Виноград-Яблоко (Grape-Apple)">Виноград-Яблоко (Grape-Apple)</option>
-            </optgroup>
-            <optgroup label="Ледяные (Ice)">
-                <option value="Ледяная смородина (Ice Black Currant)">Ледяная смородина (Ice Black Currant)</option>
-                <option value="Ледяная брусника (Ice Lingonberry)">Ледяная брусника (Ice Lingonberry)</option>
-                <option value="Ледяной крыжовник (Ice Gooseberry)">Ледяной крыжовник (Ice Gooseberry)</option>
-                <option value="Ледяная голубика (Ice Blueberry)">Ледяная голубика (Ice Blueberry)</option>
-                <option value="Ледяной гранат (Ice Pomegranate)">Ледяной гранат (Ice Pomegranate)</option>
-                <option value="Ледяной лайм (Ice Lime)">Ледяной лайм (Ice Lime)</option>
-                <option value="Ледяной мохито (Ice Mojito)">Ледяной мохито (Ice Mojito)</option>
-                <option value="Ледяная кола (Ice Cola)">Ледяная кола (Ice Cola)</option>
-                <option value="Ледяной энергетик (Ice Energy)">Ледяной энергетик (Ice Energy)</option>
-            </optgroup>
-            <optgroup label="Табачные и десертные">
-                <option value="Табачный лёд (Tobacco Ice)">Табачный лёд (Tobacco Ice)</option>
-                <option value="Кофейный лёд (Coffee Ice)">Кофейный лёд (Coffee Ice)</option>
-                <option value="Шоколадный лёд (Chocolate Ice)">Шоколадный лёд (Chocolate Ice)</option>
-                <option value="Карамельный лёд (Caramel Ice)">Карамельный лёд (Caramel Ice)</option>
-                <option value="Ванильный лёд (Vanilla Ice)">Ванильный лёд (Vanilla Ice)</option>
-            </optgroup>
-        </select>
-        <button onclick="addToCart('Podonki Last Hup', 15, 'lasthup-flavor')">➕ В корзину</button>
-    </div>
-
-    <!-- Catswill (Цена 15) -->
-    <div class="card">
-        <h3>🐱 Catswill</h3>
-        <p>Цена: 15 руб.</p>
-        <select id="catswill-flavor">
-            <optgroup label="Фрукты и ягоды">
-                <option value="Яблоко">Яблоко</option>
-                <option value="Груша">Груша</option>
-                <option value="Клубника">Клубника</option>
-                <option value="Персик">Персик</option>
-                <option value="Виноград">Виноград</option>
-                <option value="Арбуз">Арбуз</option>
-                <option value="Дыня">Дыня</option>
-                <option value="Манго">Манго</option>
-                <option value="Ананас">Ананас</option>
-                <option value="Вишня">Вишня</option>
-                <option value="Малина">Малина</option>
-                <option value="Черника">Черника</option>
-                <option value="Голубика">Голубика</option>
-                <option value="Киви">Киви</option>
-                <option value="Маракуйя">Маракуйя</option>
-                <option value="Гранат">Гранат</option>
-                <option value="Лайм">Лайм</option>
-                <option value="Банан">Банан</option>
-                <option value="Кокос">Кокос</option>
-            </optgroup>
-            <optgroup label="Ягодные миксы">
-                <option value="Малина-Ежевика">Малина-Ежевика</option>
-                <option value="Клубника-Банан">Клубника-Банан</option>
-                <option value="Манго-Маракуйя">Манго-Маракуйя</option>
-                <option value="Ананас-Кокос">Ананас-Кокос</option>
-                <option value="Арбуз-Дыня">Арбуз-Дыня</option>
-                <option value="Виноград-Яблоко">Виноград-Яблоко</option>
-                <option value="Лесные ягоды">Лесные ягоды</option>
-            </optgroup>
-            <optgroup label="Ice (Ледяные)">
-                <option value="Ice Grape">Ice Grape</option>
-                <option value="Ice Strawberry">Ice Strawberry</option>
-                <option value="Ice Peach">Ice Peach</option>
-                <option value="Ice Mango">Ice Mango</option>
-                <option value="Ice Watermelon">Ice Watermelon</option>
-                <option value="Ice Melon">Ice Melon</option>
-                <option value="Ice Black Currant">Ice Black Currant</option>
-                <option value="Ice Lime">Ice Lime</option>
-                <option value="Ice Mojito">Ice Mojito</option>
-                <option value="Ice Cola">Ice Cola</option>
-                <option value="Ice Energy">Ice Energy</option>
-            </optgroup>
-            <optgroup label="Sour (Кислые)">
-                <option value="Кислая вишня">Кислая вишня</option>
-                <option value="Кислое яблоко">Кислое яблоко</option>
-                <option value="Кислый арбуз">Кислый арбуз</option>
-                <option value="Кислый мармелад">Кислый мармелад</option>
-                <option value="Голубая малина">Голубая малина</option>
-            </optgroup>
-            <optgroup label="Прочее">
-                <option value="Мята">Мята</option>
-                <option value="Ментол">Ментол</option>
-                <option value="Мятный лимонад">Мятный лимонад</option>
-                <option value="Клубничный лимонад">Клубничный лимонад</option>
-                <option value="Малиновый лимонад">Малиновый лимонад</option>
-                <option value="Мохито">Мохито</option>
-                <option value="Кола">Кола</option>
-                <option value="Энергетик">Энергетик</option>
-                <option value="Табак">Табак</option>
-                <option value="Кофе">Кофе</option>
-                <option value="Шоколад">Шоколад</option>
-                <option value="Карамель">Карамель</option>
-                <option value="Ваниль">Ваниль</option>
-                <option value="Йогурт">Йогурт</option>
-                <option value="Крем-сода">Крем-сода</option>
-            </optgroup>
-        </select>
-        <button onclick="addToCart('Catswill', 15, 'catswill-flavor')">➕ В корзину</button>
-    </div>
-
-    <!-- Монашка (Цена 15) -->
-    <div class="card">
-        <h3>👧 Монашка</h3>
-        <p>Цена: 15 руб.</p>
-        <select id="monashka-flavor">
-            <optgroup label="Фрукты и ягоды">
-                <option value="Яблоко">Яблоко</option>
-                <option value="Груша">Груша</option>
-                <option value="Клубника">Клубника</option>
-                <option value="Персик">Персик</option>
-                <option value="Виноград">Виноград</option>
-                <option value="Арбуз">Арбуз</option>
-                <option value="Дыня">Дыня</option>
-                <option value="Манго">Манго</option>
-                <option value="Ананас">Ананас</option>
-                <option value="Вишня">Вишня</option>
-                <option value="Малина">Малина</option>
-                <option value="Черника">Черника</option>
-                <option value="Голубика">Голубика</option>
-                <option value="Киви">Киви</option>
-                <option value="Маракуйя">Маракуйя</option>
-                <option value="Гранат">Гранат</option>
-                <option value="Лайм">Лайм</option>
-                <option value="Банан">Банан</option>
-                <option value="Кокос">Кокос</option>
-            </optgroup>
-            <optgroup label="Ягодные миксы">
-                <option value="Малина-Ежевика">Малина-Ежевика</option>
-                <option value="Клубника-Банан">Клубника-Банан</option>
-                <option value="Манго-Маракуйя">Манго-Маракуйя</option>
-                <option value="Ананас-Кокос">Ананас-Кокос</option>
-                <option value="Арбуз-Дыня">Арбуз-Дыня</option>
-                <option value="Виноград-Яблоко">Виноград-Яблоко</option>
-                <option value="Лесные ягоды">Лесные ягоды</option>
-                <option value="Чёрная смородина">Чёрная смородина</option>
-                <option value="Красная смородина">Красная смородина</option>
-                <option value="Крыжовник">Крыжовник</option>
-                <option value="Брусника">Брусника</option>
-            </optgroup>
-            <optgroup label="Ice (Ледяные)">
-                <option value="Ice Grape">Ice Grape</option>
-                <option value="Ice Strawberry">Ice Strawberry</option>
-                <option value="Ice Peach">Ice Peach</option>
-                <option value="Ice Mango">Ice Mango</option>
-                <option value="Ice Watermelon">Ice Watermelon</option>
-                <option value="Ice Melon">Ice Melon</option>
-                <option value="Ice Black Currant">Ice Black Currant</option>
-                <option value="Ice Lingonberry">Ice Lingonberry</option>
-                <option value="Ice Gooseberry">Ice Gooseberry</option>
-                <option value="Ice Blueberry">Ice Blueberry</option>
-                <option value="Ice Pomegranate">Ice Pomegranate</option>
-                <option value="Ice Lime">Ice Lime</option>
-                <option value="Ice Mojito">Ice Mojito</option>
-                <option value="Ice Cola">Ice Cola</option>
-                <option value="Ice Energy">Ice Energy</option>
-            </optgroup>
-            <optgroup label="Sour (Кислые)">
-                <option value="Кислая вишня">Кислая вишня</option>
-                <option value="Кислое яблоко">Кислое яблоко</option>
-                <option value="Кислый арбуз">Кислый арбуз</option>
-                <option value="Кислый мармелад">Кислый мармелад</option>
-                <option value="Голубая малина">Голубая малина</option>
-            </optgroup>
-            <optgroup label="Прочее">
-                <option value="Мята">Мята</option>
-                <option value="Ментол">Ментол</option>
-                <option value="Лимонады">Лимонады</option>
-                <option value="Мохито">Мохито</option>
-                <option value="Кола">Кола</option>
-                <option value="Энергетик">Энергетик</option>
-                <option value="Табак">Табак</option>
-                <option value="Кофе">Кофе</option>
-                <option value="Шоколад">Шоколад</option>
-                <option value="Карамель">Карамель</option>
-                <option value="Ваниль">Ваниль</option>
-                <option value="Йогурт">Йогурт</option>
-                <option value="Крем-сода">Крем-сода</option>
-            </optgroup>
-        </select>
-        <button onclick="addToCart('Монашка', 15, 'monashka-flavor')">➕ В корзину</button>
+    <!-- Блок с товарами (он будет меняться при нажатии на вкладки) -->
+    <div id="product-container">
+        <!-- Сюда скрипт будет вставлять карточки -->
     </div>
 
     <!-- Плавающая кнопка заказа -->
@@ -329,23 +58,42 @@
     <!-- Всплывающее окно выбора метро -->
     <dialog id="metro-dialog">
         <h3>🚇 Выберите станцию метро</h3>
-        <p style="font-size: 14px; color: #666;">Доставка осуществляется только по синей ветке г. Минск</p>
+        <p style="font-size: 14px; color: #666;">Доставка по Минску</p>
         <select id="metro-station">
             <option value="" disabled selected>--- Выберите станцию ---</option>
-            <option value="Каменная Горка">Каменная Горка</option>
-            <option value="Кунцевщина">Кунцевщина</option>
-            <option value="Спортивная">Спортивная</option>
-            <option value="Пушкинская">Пушкинская</option>
-            <option value="Молодёжная">Молодёжная</option>
-            <option value="Фрунзенская">Фрунзенская</option>
-            <option value="Немига">Немига</option>
-            <option value="Купаловская">Купаловская</option>
-            <option value="Первомайская">Первомайская</option>
-            <option value="Пролетарская">Пролетарская</option>
-            <option value="Тракторный завод">Тракторный завод</option>
-            <option value="Партизанская">Партизанская</option>
-            <option value="Автозаводская">Автозаводская</option>
-            <option value="Могилёвская">Могилёвская</option>
+            <optgroup label="🔴 Красная линия">
+                <option value="Малиновка">Малиновка</option>
+                <option value="Петровщина">Петровщина</option>
+                <option value="Михалово">Михалово</option>
+                <option value="Грушевка">Грушевка</option>
+                <option value="Институт культуры">Институт культуры</option>
+                <option value="Площадь Ленина">Площадь Ленина</option>
+                <option value="Октябрьская">Октябрьская</option>
+                <option value="Площадь Победы">Площадь Победы</option>
+                <option value="Площадь Якуба Коласа">Площадь Якуба Коласа</option>
+                <option value="Академия наук">Академия наук</option>
+                <option value="Парк Челюскинцев">Парк Челюскинцев</option>
+                <option value="Московская">Московская</option>
+                <option value="Восток">Восток</option>
+                <option value="Борисовский тракт">Борисовский тракт</option>
+                <option value="Уручье">Уручье</option>
+            </optgroup>
+            <optgroup label="🔵 Синяя линия">
+                <option value="Каменная Горка">Каменная Горка</option>
+                <option value="Кунцевщина">Кунцевщина</option>
+                <option value="Спортивная">Спортивная</option>
+                <option value="Пушкинская">Пушкинская</option>
+                <option value="Молодёжная">Молодёжная</option>
+                <option value="Фрунзенская">Фрунзенская</option>
+                <option value="Немига">Немига</option>
+                <option value="Купаловская">Купаловская</option>
+                <option value="Первомайская">Первомайская</option>
+                <option value="Пролетарская">Пролетарская</option>
+                <option value="Тракторный завод">Тракторный завод</option>
+                <option value="Партизанская">Партизанская</option>
+                <option value="Автозаводская">Автозаводская</option>
+                <option value="Могилёвская">Могилёвская</option>
+            </optgroup>
         </select>
         <button onclick="confirmCheckout()">Подтвердить заказ</button>
         <button class="cancel-btn" onclick="closeMetroModal()">Отмена</button>
@@ -356,16 +104,69 @@
         window.Telegram.WebApp.expand();
 
         let cart = [];
+        let currentTab = '10'; // По умолчанию открыта вкладка "от 10 шт"
 
-        function addToCart(name, price, selectId = null) {
-            let finalName = name;
-            if (selectId) {
-                const selectElement = document.getElementById(selectId);
-                if (selectElement) {
-                    finalName += " [" + selectElement.value + "]";
-                }
+        // === НАСТРОЙКИ ТОВАРОВ И ЦЕН ===
+        // Здесь ты можешь менять цены для каждого объема
+        const PRICES = {
+            '10': 15,  // Цена при заказе от 10 шт
+            '30': 14,  // Цена при заказе от 30 шт
+            '50': 13,  // Цена при заказе от 50 шт
+            '100': 12  // Цена при заказе от 100 шт
+        };
+
+        // Вкусы (остаются одинаковыми для всех вкладок)
+        const catswillFlavors = [
+            "Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", 
+            "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", 
+            "Лайм", "Банан", "Кокос", "Мята", "Ментол", "Мятный лимонад", "Мохито", "Кола", 
+            "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"
+        ];
+
+        // Функция переключения вкладок
+        function changeTab(tab) {
+            currentTab = tab;
+            
+            // Меняем активную кнопку
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Перерисовываем товары
+            renderProducts();
+        }
+
+        // Функция отрисовки товаров
+        function renderProducts() {
+            const container = document.getElementById('product-container');
+            container.innerHTML = ''; // Очищаем старое
+
+            const currentPrice = PRICES[currentTab];
+
+            // Создаем карточку Catswill
+            let options = catswillFlavors.map(f => `<option value="${f}">${f}</option>`).join('');
+
+            container.innerHTML = `
+                <div class="card">
+                    <h3>🐱 Catswill (Опт)</h3>
+                    <p>Цена за 1 шт: ${currentPrice} руб.</p>
+                    <select id="catswill-flavor">
+                        <option value="" disabled selected>--- Выберите вкус ---</option>
+                        ${options}
+                    </select>
+                    <button onclick="addToCart('Catswill', ${currentPrice}, 'catswill-flavor')">➕ В корзину</button>
+                </div>
+            `;
+        }
+
+        // Добавление в корзину
+        function addToCart(name, price, selectId) {
+            const selectElement = document.getElementById(selectId);
+            if (!selectElement.value) {
+                alert("⚠️ Пожалуйста, выберите вкус!");
+                return;
             }
-            // ВАЖНО: сюда передается цена (price) из кнопки
+
+            let finalName = name + " [" + selectElement.value + "]";
             cart.push({ name: finalName, price: price });
             updateCheckoutBtn();
             alert("Товар добавлен в корзину!");
@@ -419,7 +220,7 @@
                 totalSum += item.price;
             });
 
-            var textForAdmin = `🔥 Новый заказ!\n\n${itemsText}\n💰 Итого: ${totalSum} руб.\n🚇 Метро: ${metroStation}\n👤 Клиент: ${clientName}\nID: ${clientId}`;
+            var textForAdmin = `🔥 Новый заказ (Опт)!\n\n${itemsText}\n💰 Итого: ${totalSum} руб.\n🚇 Метро: ${metroStation}\n👤 Клиент: ${clientName}\nID: ${clientId}`;
             var urlAdmin = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + adminId + "&text=" + encodeURIComponent(textForAdmin);
             fetch(urlAdmin);
             
@@ -433,6 +234,9 @@
             cart = [];
             updateCheckoutBtn();
         }
+
+        // Запускаем отрисовку при загрузке страницы
+        renderProducts();
     </script>
 </body>
 </html>
