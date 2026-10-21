@@ -34,7 +34,7 @@
             var adminId = "5569005187";
             
             // Данные для тебя
-            var textForAdmin = "Заказ: " + item + " за " + price + " руб.";
+            var textForAdmin = "Заказ: " + item + " за " + price + " руб.\\nID клиента: " + user.id;
             var urlAdmin = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + adminId + "&text=" + encodeURIComponent(textForAdmin);
             
             fetch(urlAdmin);
