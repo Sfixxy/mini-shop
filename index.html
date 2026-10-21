@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Первый Сайт</title>
+    <style>
+        /* Это CSS — стили для нашего сайта */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+        }
+        h1 { margin-top: 0; }
+        button {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Привет! 🚀</h1>
+        <p>Это мой первый сайт, написанный с нуля.</p>
+        <p>Он работает прямо сейчас, без серверов.</p>
+        <button onclick="alert('Ура! JavaScript работает!')">Нажми меня</button>
+    </div>
+
+       <script>
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+        // Это JavaScript — логика сайта
+        console.log("Сайт успешно загружен!");
+    </script>
+</body>
+</html>
