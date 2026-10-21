@@ -5,53 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: Arial; background: #667eea; color: white; padding: 20px; }
-        .card { background: rgba(255,255,255,0.2); padding: 15px; margin-bottom: 10px; border-radius: 8px; }
+        body { font-family: Arial; background: #667eea; color: white; padding: 20px; padding-bottom: 80px; margin: 0; }
+        .card { background: rgba(255,255,255,0.2); padding: 15px; margin-bottom: 15px; border-radius: 8px; }
         h3 { margin-top: 0; margin-bottom: 5px; }
         p { margin-top: 0; margin-bottom: 10px; }
         select { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: none; font-size: 16px; }
-        button { background: red; color: white; padding: 10px; border: none; border-radius: 5px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button { background: #ff6b6b; color: white; padding: 10px; border: none; border-radius: 5px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; }
+        
+        /* Кнопка оформления заказа (прикреплена внизу) */
+        #checkout-btn {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #28a745;
+            color: white;
+            padding: 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 0;
+            display: none; /* Скрыта, пока корзина пуста */
+            font-weight: bold;
+            text-align: center;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <h2>Магазин</h2>
     
-    <!-- Карточка с картриджем -->
+    <!-- Товар 1: Картридж -->
     <div class="card">
         <h3>Картридж Xros</h3>
         <p>Цена: 400 руб.</p>
-        
-        <!-- Выпадающий список -->
         <select id="xros-resistance">
             <option value="0.4 Ом">Сопротивление: 0.4 Ом</option>
             <option value="0.6 Ом">Сопротивление: 0.6 Ом</option>
             <option value="0.7 Ом">Сопротивление: 0.7 Ом</option>
             <option value="0.8 Ом">Сопротивление: 0.8 Ом</option>
         </select>
-
-        <button onclick="buyXros()">КУПИТЬ</button>
+        <button onclick="addToCart('Картридж Xros', 400, 'xros-resistance')">➕ В корзину</button>
     </div>
 
-    <!-- Старая карточка (оставил для примера, можешь удалить) -->
+    <!-- Товар 2: Футболка -->
     <div class="card">
         <h3>Футболка</h3>
-        <p>1500 руб.</p>
-        <button onclick="sendOrder('Футболка', 1500)">КУПИТЬ</button>
+        <p>Цена: 1500 руб.</p>
+        <button onclick="addToCart('Футболка', 1500)">➕ В корзину</button>
     </div>
+
+    <!-- Плавающая кнопка заказа -->
+    <button id="checkout-btn" onclick="checkout()">🛒 Оформить заказ</button>
 
     <script>
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
 
-        // Функция для картриджа (считывает выбранное сопротивление)
-        function buyXros() {
-            var selectedResistance = document.getElementById("xros-resistance").value;
-            var productName = "Картридж Xros (" + selectedResistance + ")";
-            sendOrder(productName, 400);
+        // Массив, где будет храниться корзина
+        let cart = [];
+
+        // Функция добавления товара
+        function addToCart(name, price, selectId = null) {
+            let finalName = name;
+            
+            // Если у товара есть выбор (например, сопротивление)
+            if (selectId) {
+                const selectElement = document.getElementById(selectId);
+                if (selectElement) {
+                    finalName += " (" + selectElement.value + ")";
+                }
+            }
+
+            // Добавляем в корзину
+            cart.push({ name: finalName, price: price });
+            
+            // Обновляем кнопку внизу
+            updateCheckoutBtn();
+            
+            alert("Товар добавлен в корзину!");
         }
 
-        // Основная функция отправки заказа
-        function sendOrder(item, price) {
+        // Обновление текста на кнопке внизу
+        function updateCheckoutBtn() {
+            const btn = document.getElementById('checkout-btn');
+            if (cart.length > 0) {
+                const total = cart.reduce((sum, item) => sum + item.price, 0);
+                btn.style.display = 'block';
+                btn.innerText = `🛒 Оформить заказ (${cart.length} шт.) на ${total} руб.`;
+            } else {
+                btn.style.display = 'none';
+            }
+        }
+
+        // Функция оформления заказа
+        function checkout() {
+            if (cart.length === 0) return;
+
             var token = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA";
             var adminId = "5569005187";
             
@@ -59,19 +109,31 @@
             var clientName = user ? (user.username ? "@" + user.username : user.first_name) : "Неизвестный";
             var clientId = user ? user.id : "Нет ID";
 
+            // Формируем список товаров
+            let itemsText = "";
+            let totalSum = 0;
+            cart.forEach((item, index) => {
+                itemsText += `${index + 1}. ${item.name} - ${item.price} руб.\n`;
+                totalSum += item.price;
+            });
+
             // Текст для тебя
-            var textForAdmin = "🔥 Новый заказ!\nТовар: " + item + "\nЦена: " + price + " руб.\nКлиент: " + clientName + "\nID: " + clientId;
+            var textForAdmin = `🔥 Новый заказ!\n\n${itemsText}\n💰 Итого: ${totalSum} руб.\n👤 Клиент: ${clientName}\nID: ${clientId}`;
             var urlAdmin = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + adminId + "&text=" + encodeURIComponent(textForAdmin);
             fetch(urlAdmin);
             
             // Текст для клиента
             if (user && user.id) {
-                var textForClient = "✅ Спасибо! Вы купили: " + item + ". Ожидайте сообщения от менеджера.";
+                var textForClient = `✅ Спасибо за заказ!\nВы выбрали:\n${itemsText}\nИтого: ${totalSum} руб.\nОжидайте сообщения от менеджера.`;
                 var urlClient = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + user.id + "&text=" + encodeURIComponent(textForClient);
                 fetch(urlClient);
             }
             
-            alert("Заказ отправлен!");
+            alert("Заказ оформлен!");
+            
+            // Очищаем корзину после заказа
+            cart = [];
+            updateCheckoutBtn();
         }
     </script>
 </body>
