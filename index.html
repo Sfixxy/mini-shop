@@ -52,13 +52,11 @@
         <button onclick="sendOrder()">Купить</button>
     </div>
 
-           <script>
-        // 1. Сначала инициализируем Telegram
+             <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
-        // 2. Описываем функцию отправки
         function sendOrder() {
             const orderData = {
                 action: "buy",
@@ -66,11 +64,29 @@
                 price: 1000
             };
             
-            // Отправляем данные
-            tg.sendData(JSON.stringify(orderData));
+            // Твой токен и ID (ЗАМЕНИ НА СВОИ!)
+            const TOKEN = "8270338103:AAFx1kSB85vrwTyACfblonpTHa4h0pXn-FA"; 
+            const CHAT_ID = "5569005187"; // Узнай у @userinfobot
+            
+            // Формируем запрос к API Telegram
+            const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+            const text = `🔥 ЗАКАЗ! Товар: ${orderData.product}, Цена: ${orderData.price}`;
+            
+            // Отправляем через fetch (это работает везде)
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: CHAT_ID, text: text })
+            })
+            .then(() => {
+                // Показываем пользователю, что заказ ушел
+                alert("Заказ успешно отправлен!");
+                tg.close(); // Закрываем Mini App
+            })
+            .catch((err) => {
+                alert("Ошибка отправки: " + err);
+            });
         }
-
-        console.log("Сайт успешно загружен!");
     </script>
 </body>
 </html>
