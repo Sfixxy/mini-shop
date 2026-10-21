@@ -102,7 +102,7 @@
 <body>
     <h2>VAPE SHOP</h2>
 
-    <!-- Кнопка админа (будет видна только тебе) -->
+    <!-- Кнопка админа -->
     <div id="admin-panel-btn" style="display: none; text-align: center; margin-bottom: 15px;">
         <button onclick="openAdminPanel()" style="background: #333; color: #fff; padding: 8px 15px; font-size: 14px; width: auto; border: 1px solid #555;">⚙️ Управление наличием</button>
     </div>
@@ -114,7 +114,7 @@
         <button class="tab-btn" onclick="changeTab('100', event)">от 100 шт</button>
     </div>
 
-    <div id="product-container"></div>
+    <div id="product-container"><p style="text-align: center; color: #00ffff;">Загрузка товаров...</p></div>
 
     <!-- Окно настроек админа -->
     <div id="admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; padding: 20px; box-sizing: border-box; overflow-y: auto;">
@@ -149,43 +149,17 @@
     <script>
         window.Telegram.WebApp.ready();
         
-        // Получаем данные пользователя Telegram
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
-        
+        const ADMIN_ID = 5569005187; 
+        const TOKEN = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA";
+
         let cart = [];
         let currentTab = '10';
         let selectedStation = "";
+        let inStock = {}; // Тут будут храниться настройки
         
         const PRICES = { '10': 15, '30': 14, '50': 13, '100': 12 };
 
-        // Твой ID (для админки)
-        const ADMIN_ID = 5569005187; 
-        
-                // Загружаем сохраненные остатки из памяти
-        let inStock = {};
-
-        // Функция инициализации (запускается, когда Telegram полностью прогрузился)
-        function initApp() {
-            // Читаем память ТОЛЬКО после загрузки
-            inStock = JSON.parse(localStorage.getItem('vape_stock')) || {};
-
-            // Показываем кнопку админа только тебе
-            if (user && user.id === ADMIN_ID) {
-                document.getElementById('admin-panel-btn').style.display = 'block';
-            }
-
-            // Запускаем отрисовку
-            render();
-        }
-
-        // Говорим Telegram: "Когда будешь готов, запусти initApp"
-        window.Telegram.WebApp.onEvent('themeChanged', initApp);
-        window.Telegram.WebApp.ready();
-        
-        // Запускаем на всякий случай с небольшой задержкой
-        setTimeout(initApp, 100);
-
-        // ИСПРАВЛЕННЫЕ СТАНЦИИ
         const lines = {
             blue: ["Малиновка", "Петровщина", "Михалово", "Грушевка", "Институт культуры", "Площадь Ленина", "Октябрьская", "Площадь Победы", "Площадь Якуба Коласа", "Академия наук", "Парк Челюскинцев", "Московская", "Восток", "Борисовский тракт", "Уручье"],
             red: ["Каменная Горка", "Кунцевщина", "Спортивная", "Пушкинская", "Молодёжная", "Фрунзенская", "Немига", "Купаловская", "Первомайская", "Пролетарская", "Тракторный завод", "Партизанская", "Автозаводская", "Могилёвская"],
@@ -197,6 +171,37 @@
             monashka: { name: "👧 Монашка", list: ["Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", "Лайм", "Банан", "Кокос", "Лесные ягоды", "Чёрная смородина", "Красная смородина", "Крыжовник", "Брусника", "Ice Grape", "Ice Strawberry", "Ice Peach", "Ice Mango", "Ice Watermelon", "Ice Melon", "Ice Black Currant", "Ice Lime", "Ice Mojito", "Ice Cola", "Ice Energy", "Кислая вишня", "Кислое яблоко", "Кислый арбуз", "Кислый мармелад", "Голубая малина", "Мята", "Ментол", "Лимонады", "Мохито", "Кола", "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"] },
             podonki: { name: "🔹 Podonki", list: ["Яблоко (Apple)", "Груша (Pear)", "Клубника (Strawberry)", "Персик (Peach)", "Виноград (Grape)", "Арбуз (Watermelon)", "Дыня (Melon)", "Манго (Mango)", "Ананас (Pineapple)", "Вишня (Cherry)", "Лимон (Lemon)", "Апельсин (Orange)", "Малина (Raspberry)", "Черника (Blueberry)", "Банан (Banana)", "Кокос (Coconut)", "Мята (Mint)", "Ледяная мята (Ice Mint)", "Ментол (Menthol)", "Табак (Tobacco)", "Кофе (Coffee)", "Шоколад (Chocolate)", "Карамель (Caramel)", "Ваниль (Vanilla)", "Кислый мармелад (Sour Gummy)", "Кислая вишня (Sour Cherry)", "Кислое яблоко (Sour Apple)", "Кислый арбуз (Sour Watermelon)", "Ледяной виноград (Ice Grape)", "Ледяная клубника (Ice Strawberry)", "Ледяной персик (Ice Peach)", "Ледяной манго (Ice Mango)", "Ледяной ананас (Ice Pineapple)", "Ледяная дыня (Ice Melon)", "Ледяной арбуз (Ice Watermelon)", "Мятный лимонад (Mint Lemonade)", "Клубничный лимонад (Strawberry Lemonade)", "Малиновый лимонад (Raspberry Lemonade)", "Голубая малина (Blue Raspberry)", "Ежевика (Blackberry)", "Киви (Kiwi)", "Маракуйя (Passion Fruit)", "Гранат (Pomegranate)", "Лайм (Lime)", "Кола (Cola)", "Энергетик (Energy Drink)", "Йогурт (Yogurt)", "Крем-сода (Cream Soda)", "Мохито (Mojito)"] }
         };
+
+        // === ЗАГРУЗКА НАСТРОЕК ИЗ ОБЛАКА TELEGRAM ===
+        async function loadCloudSettings() {
+            try {
+                // Просим Telegram отдать последнее сообщение от бота
+                const response = await fetch(`https://api.telegram.org/bot${TOKEN}/getUpdates`);
+                const data = await response.json();
+                
+                if (data.ok && data.result.length > 0) {
+                    // Ищем сообщение, которое начинается с секретного кода
+                    for (let i = data.result.length - 1; i >= 0; i--) {
+                        const msg = data.result[i].message;
+                        if (msg && msg.text && msg.text.startsWith("STOCK_DATA:")) {
+                            const jsonStr = msg.text.replace("STOCK_DATA:", "");
+                            inStock = JSON.parse(jsonStr);
+                            break;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log("Ошибка загрузки настроек:", e);
+            }
+            
+            // Показываем кнопку админа
+            if (user && user.id === ADMIN_ID) {
+                document.getElementById('admin-panel-btn').style.display = 'block';
+            }
+            
+            // Отрисовываем сайт
+            render();
+        }
 
         function changeTab(tab, e) {
             currentTab = tab;
@@ -225,7 +230,7 @@
                 </div>
             `;
 
-            // 2. ЖИЖИ (с фильтрацией по наличию)
+            // 2. ЖИЖИ (с фильтрацией по наличию из облака)
             for (let key in flavorsData) {
                 const brand = flavorsData[key];
                 let checks = '';
@@ -268,10 +273,7 @@
 
         function addCartridge() {
             const select = document.getElementById('xros-resistance');
-            if (!select.value) {
-                alert("⚠️ Выберите сопротивление картриджа!");
-                return;
-            }
+            if (!select.value) { alert("⚠️ Выберите сопротивление картриджа!"); return; }
             cart.push({ brand: "💨 Картридж Xros", flavor: select.value });
             select.value = ""; 
             updateUI();
@@ -280,10 +282,7 @@
 
         function addBrandToCart(brandKey) {
             const checkboxes = document.querySelectorAll(`input[data-brand="${brandKey}"]:checked`);
-            if (checkboxes.length === 0) {
-                alert("Выберите хотя бы один вкус!");
-                return;
-            }
+            if (checkboxes.length === 0) { alert("Выберите хотя бы один вкус!"); return; }
             checkboxes.forEach(cb => {
                 cart.push({ brand: flavorsData[brandKey].name, flavor: cb.value });
                 cb.checked = false;
@@ -341,11 +340,7 @@
         }
 
         function toggleMetro() {
-            if (cart.length === 0) {
-                alert("Ваша корзина пуста. Добавьте товары!");
-                return;
-            }
-            
+            if (cart.length === 0) { alert("Ваша корзина пуста. Добавьте товары!"); return; }
             const sec = document.getElementById('metro-section');
             if (sec.style.display === 'none' || sec.style.display === '') {
                 sec.style.display = 'block';
@@ -372,14 +367,9 @@
         }
 
         function submitOrder() {
-            if (!selectedStation) {
-                alert("⚠️ Выберите станцию метро!");
-                return;
-            }
+            if (!selectedStation) { alert("⚠️ Выберите станцию метро!"); return; }
 
-            const token = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA";
             const adminId = "5569005187";
-            
             let price = 15;
             if (cart.length >= 100) price = 11;
             else if (cart.length >= 50) price = 12;
@@ -393,11 +383,11 @@
             for (let k in items) text += `${k} - ${items[k]} шт.\n`;
 
             let msgAdmin = `🔥 Заказ!\n${text}\nИтого: ${total} руб.\n🚇 ${selectedStation}\nКлиент: @${user?.username || user?.first_name}\nID: ${user?.id}`;
-            fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${adminId}&text=${encodeURIComponent(msgAdmin)}`);
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${adminId}&text=${encodeURIComponent(msgAdmin)}`);
 
             if (user?.id) {
                 let msgClient = `✅ Спасибо! Вы заказали:\n${text}\nИтого: ${total} руб.\n🚇 ${selectedStation}`;
-                fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${user.id}&text=${encodeURIComponent(msgClient)}`);
+                fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${user.id}&text=${encodeURIComponent(msgClient)}`);
             }
 
             alert("Заказ отправлен!");
@@ -414,7 +404,6 @@
                 let html = `<h4 style="color: #00ffff; margin-bottom: 5px; margin-top: 15px;">${brand.name}</h4>`;
                 
                 brand.list.forEach(f => {
-                    // В админке всегда показываем ВСЕ товары (чтобы можно было включить обратно)
                     let isChecked = inStock[f] !== false ? 'checked' : '';
                     html += `
                         <label style="display: block; margin-bottom: 5px; font-size: 14px; cursor: pointer;">
@@ -433,7 +422,8 @@
             document.getElementById('admin-modal').style.display = 'none';
         }
 
-        function saveAdminSettings() {
+        // === СОХРАНЕНИЕ НАСТРОЕК В ОБЛАКО TELEGRAM ===
+        async function saveAdminSettings() {
             const checkboxes = document.querySelectorAll('#admin-flavors-list input[type="checkbox"]');
             let newStock = {};
 
@@ -441,17 +431,24 @@
                 newStock[cb.getAttribute('data-flavor')] = cb.checked;
             });
 
-            localStorage.setItem('vape_stock', JSON.stringify(newStock));
-            inStock = newStock;
-
-            alert("✅ Настройки наличия сохранены! Страница сейчас обновится.");
-            closeAdminPanel();
+            // Формируем секретный код для бота
+            const cloudData = "STOCK_DATA:" + JSON.stringify(newStock);
             
-            // Перезагружаем страницу, чтобы товары сразу исчезли
+            try {
+                // Отправляем скрытое сообщение боту (оно сохранится в истории)
+                await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${ADMIN_ID}&text=${encodeURIComponent(cloudData)}`);
+                alert("✅ Настройки сохранены в облако Telegram! Страница обновится.");
+            } catch (e) {
+                alert("Ошибка сохранения. Проверьте интернет.");
+            }
+
+            inStock = newStock;
+            closeAdminPanel();
             window.location.reload(); 
         }
 
-        render();
+        // Запускаем загрузку при старте
+        loadCloudSettings();
     </script>
 </body>
 </html>
