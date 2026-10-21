@@ -57,35 +57,31 @@
         tg.ready();
         tg.expand();
 
-        function sendOrder() {
-            const orderData = {
-                action: "buy",
-                product: "Тестовый товар",
-                price: 1000
-            };
-            
-            // Твой токен и ID (ЗАМЕНИ НА СВОИ!)
+                       function sendOrder() {
+            // ВСТАВЬ СЮДА НОВЫЙ ТОКЕН (тот, с которым сработал тест)
             const TOKEN = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA"; 
-            const CHAT_ID = "5569005187"; // Узнай у @userinfobot
+            const CHAT_ID = "5569005187"; 
             
-            // Формируем запрос к API Telegram
             const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-            const text = `🔥 ЗАКАЗ! Товар: ${orderData.product}, Цена: ${orderData.price}`;
             
-            // Отправляем через fetch (это работает везде)
+            // Текст, который придет в Telegram
+            const text = "🔥 Новый заказ из Mini App!";
+            
             fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ chat_id: CHAT_ID, text: text })
             })
-            .then(() => {
-                // Показываем пользователю, что заказ ушел
-                alert("Заказ успешно отправлен!");
-                tg.close(); // Закрываем Mini App
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    alert("✅ Заказ отправлен!");
+                    // window.Telegram.WebApp.close(); // Можно раскомментировать, чтобы окно закрывалось
+                } else {
+                    alert("Ошибка Telegram: " + data.description);
+                }
             })
-            .catch((err) => {
-                alert("Ошибка отправки: " + err);
-            });
+            .catch(err => alert("Ошибка сети: " + err));
         }
     </script>
 </body>
