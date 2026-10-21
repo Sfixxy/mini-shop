@@ -102,6 +102,11 @@
 <body>
     <h2>VAPE SHOP</h2>
 
+    <!-- Кнопка админа (будет видна только тебе) -->
+    <div id="admin-panel-btn" style="display: none; text-align: center; margin-bottom: 15px;">
+        <button onclick="openAdminPanel()" style="background: #333; color: #fff; padding: 8px 15px; font-size: 14px; width: auto; border: 1px solid #555;">⚙️ Управление наличием</button>
+    </div>
+
     <div class="tabs">
         <button class="tab-btn active" onclick="changeTab('10', event)">от 10 шт</button>
         <button class="tab-btn" onclick="changeTab('30', event)">от 30 шт</button>
@@ -110,6 +115,17 @@
     </div>
 
     <div id="product-container"></div>
+
+    <!-- Окно настроек админа -->
+    <div id="admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; padding: 20px; box-sizing: border-box; overflow-y: auto;">
+        <h3 style="color: #b366ff; margin-top: 0;">⚙️ Наличие товаров</h3>
+        <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">Сними галочки с тех вкусов, которых НЕТ в наличии. Клиенты их не увидят.</p>
+        
+        <div id="admin-flavors-list" style="margin-bottom: 20px;"></div>
+        
+        <button onclick="saveAdminSettings()" style="background: #28a745; margin-bottom: 10px;">✅ Сохранить</button>
+        <button onclick="closeAdminPanel()" style="background: #555;">Отмена</button>
+    </div>
 
     <!-- БЛОК КОРЗИНЫ -->
     <div id="cart-section">
@@ -139,7 +155,19 @@
         
         const PRICES = { '10': 15, '30': 14, '50': 13, '100': 12 };
 
-        // ИСПРАВЛЕННЫЕ СТАНЦИИ (как на твоем скриншоте)
+        // Твой ID (для админки)
+        const ADMIN_ID = 5569005187; 
+        
+        // Загружаем сохраненные остатки из памяти
+        let inStock = JSON.parse(localStorage.getItem('vape_stock')) || {};
+
+        // Показываем кнопку админа только тебе
+        const user = window.Telegram.WebApp.initDataUnsafe?.user;
+        if (user && user.id === ADMIN_ID) {
+            document.getElementById('admin-panel-btn').style.display = 'block';
+        }
+
+        // ИСПРАВЛЕННЫЕ СТАНЦИИ
         const lines = {
             blue: ["Малиновка", "Петровщина", "Михалово", "Грушевка", "Институт культуры", "Площадь Ленина", "Октябрьская", "Площадь Победы", "Площадь Якуба Коласа", "Академия наук", "Парк Челюскинцев", "Московская", "Восток", "Борисовский тракт", "Уручье"],
             red: ["Каменная Горка", "Кунцевщина", "Спортивная", "Пушкинская", "Молодёжная", "Фрунзенская", "Немига", "Купаловская", "Первомайская", "Пролетарская", "Тракторный завод", "Партизанская", "Автозаводская", "Могилёвская"],
@@ -163,7 +191,7 @@
             const box = document.getElementById('product-container');
             box.innerHTML = '';
             
-            // 1. СНАЧАЛА ДОБАВЛЯЕМ КАРТРИДЖИ
+            // 1. КАРТРИДЖИ
             box.innerHTML += `
                 <div class="card" style="border: 1px solid #b366ff;">
                     <h3>💨 Картридж Xros</h3>
@@ -179,41 +207,47 @@
                 </div>
             `;
 
-            // 2. ЗАТЕМ ДОБАВЛЯЕМ ЖИЖИ С ГАЛОЧКАМИ
+            // 2. ЖИЖИ (с фильтрацией по наличию)
             for (let key in flavorsData) {
                 const brand = flavorsData[key];
-                let checks = brand.list.map((f, i) => `
-                    <label class="flavor-checkbox">
-                        <input type="checkbox" value="${f}" data-brand="${key}">
-                        ${f}
-                    </label>
-                `).join('');
+                let checks = '';
 
-               // Массив с картинками для каждой марки
-const brandImages = {
-    catswill: "https://tse3.mm.bing.net/th/id/OIP.TDPyRT8Tlu_Yv3XPVRr7QAHaHS?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", // Замени на свои ссылки
-    monashka: "https://tse4.mm.bing.net/th/id/OIP.7L7OunZ8Ibdp6PVmUg01hgHaGq?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
-    podonki: "https://kurgan.smokemarket.cc/image/cache/catalog/product/55ff22fa-cfb7-11ee-9b0b-309c23b36407/1c_55ff22facfb711ee9b0b309c23b36407_8bc4dcebcfd011ee9b0b309c23b36407-340x340.jpg?1708432189"
-};
+                brand.list.forEach((f, i) => {
+                    // Если товара нет в наличии и мы не админ — скрываем его
+                    if (inStock[f] === false && (!user || user.id !== ADMIN_ID)) return;
 
-// ... (внутри функции render)
-box.innerHTML += `
-    <div class="card">
-        <div style="display: flex; align-items: center; margin-bottom: 10px;">
-            <img src="${brandImages[key]}" style="width: 50px; height: 50px; border-radius: 8px; margin-right: 15px; object-fit: cover;" alt="${brand.name}">
-            <div>
-                <h3 style="margin: 0;">${brand.name}</h3>
-                <p style="margin: 0;">Цена: ${PRICES[currentTab]} руб/шт</p>
-            </div>
-        </div>
-        <div class="flavors-grid">${checks}</div>
-        <button onclick="addBrandToCart('${key}')">➕ Добавить выбранные</button>
-    </div>
+                    checks += `
+                        <label class="flavor-checkbox">
+                            <input type="checkbox" value="${f}" data-brand="${key}">
+                            ${f}
+                        </label>
+                    `;
+                });
+
+                if (checks === '') continue; // Если нет ни одного вкуса, скрываем карточку
+
+                const brandImages = {
+                    catswill: "https://tse3.mm.bing.net/th/id/OIP.TDPyRT8Tlu_Yv3XPVRr7QAHaHS?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+                    monashka: "https://tse4.mm.bing.net/th/id/OIP.7L7OunZ8Ibdp6PVmUg01hgHaGq?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+                    podonki: "https://kurgan.smokemarket.cc/image/cache/catalog/product/55ff22fa-cfb7-11ee-9b0b-309c23b36407/1c_55ff22facfb711ee9b0b309c23b36407_8bc4dcebcfd011ee9b0b309c23b36407-340x340.jpg?1708432189"
+                };
+
+                box.innerHTML += `
+                    <div class="card">
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <img src="${brandImages[key]}" style="width: 50px; height: 50px; border-radius: 8px; margin-right: 15px; object-fit: cover;" alt="${brand.name}">
+                            <div>
+                                <h3 style="margin: 0;">${brand.name}</h3>
+                                <p style="margin: 0;">Цена: ${PRICES[currentTab]} руб/шт</p>
+                            </div>
+                        </div>
+                        <div class="flavors-grid">${checks}</div>
+                        <button onclick="addBrandToCart('${key}')">➕ Добавить выбранные</button>
+                    </div>
                 `;
             }
         }
 
-        // Функция добавления картриджа
         function addCartridge() {
             const select = document.getElementById('xros-resistance');
             if (!select.value) {
@@ -221,7 +255,7 @@ box.innerHTML += `
                 return;
             }
             cart.push({ brand: "💨 Картридж Xros", flavor: select.value });
-            select.value = ""; // Сбрасываем выбор
+            select.value = ""; 
             updateUI();
             alert("Картридж добавлен в корзину!");
         }
@@ -290,11 +324,11 @@ box.innerHTML += `
 
         function toggleMetro() {
             if (cart.length === 0) {
-        alert("Ваша корзина пуста. Добавьте товары!");
-        return;
-    }
-    
-    const sec = document.getElementById('metro-section');
+                alert("Ваша корзина пуста. Добавьте товары!");
+                return;
+            }
+            
+            const sec = document.getElementById('metro-section');
             if (sec.style.display === 'none' || sec.style.display === '') {
                 sec.style.display = 'block';
                 document.getElementById('checkout-btn').innerText = "✅ Подтвердить заказ";
@@ -327,7 +361,6 @@ box.innerHTML += `
 
             const token = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA";
             const adminId = "5569005187";
-            let user = window.Telegram.WebApp.initDataUnsafe?.user;
             
             let price = 15;
             if (cart.length >= 100) price = 11;
@@ -351,6 +384,50 @@ box.innerHTML += `
 
             alert("Заказ отправлен!");
             location.reload();
+        }
+
+        // === ЛОГИКА АДМИН-ПАНЕЛИ ===
+        function openAdminPanel() {
+            const list = document.getElementById('admin-flavors-list');
+            list.innerHTML = '';
+
+            for (let key in flavorsData) {
+                const brand = flavorsData[key];
+                let html = `<h4 style="color: #00ffff; margin-bottom: 5px; margin-top: 15px;">${brand.name}</h4>`;
+                
+                brand.list.forEach(f => {
+                    let isChecked = inStock[f] !== false ? 'checked' : '';
+                    html += `
+                        <label style="display: block; margin-bottom: 5px; font-size: 14px; cursor: pointer;">
+                            <input type="checkbox" data-flavor="${f}" ${isChecked} style="transform: scale(1.2); margin-right: 10px; cursor: pointer;"> 
+                            ${f}
+                        </label>
+                    `;
+                });
+                list.innerHTML += `<div style="margin-bottom: 15px; background: #252530; padding: 10px; border-radius: 8px; text-align: left;">${html}</div>`;
+            }
+
+            document.getElementById('admin-modal').style.display = 'block';
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('admin-modal').style.display = 'none';
+        }
+
+        function saveAdminSettings() {
+            const checkboxes = document.querySelectorAll('#admin-flavors-list input[type="checkbox"]');
+            let newStock = {};
+
+            checkboxes.forEach(cb => {
+                newStock[cb.getAttribute('data-flavor')] = cb.checked;
+            });
+
+            localStorage.setItem('vape_stock', JSON.stringify(newStock));
+            inStock = newStock;
+
+            alert("✅ Настройки наличия сохранены!");
+            closeAdminPanel();
+            render();
         }
 
         render();
