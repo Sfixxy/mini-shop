@@ -1,43 +1,74 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой Первый Сайт</title>
+    <title>Мой Магазин</title>
+    <!-- Подключаем скрипт Telegram -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <style>
-        /* Это CSS — стили для нашего сайта */
+        /* Стили для всего сайта */
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             margin: 0;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             min-height: 100vh;
         }
-        .card {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        
+        .shop-header {
             text-align: center;
-            max-width: 400px;
+            margin-bottom: 20px;
         }
-        h1 { margin-top: 0; }
+        
+        .product-card {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .product-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+            background-color: #ddd; /* Заглушка, если картинка не загрузится */
+        }
+        
+        .product-info {
+            flex-grow: 1;
+        }
+        
+        .product-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+        }
+        
+        .product-info p {
+            margin: 0;
+            font-weight: bold;
+            color: #ffd700; /* Золотой цвет для цены */
+        }
+        
         button {
             background-color: #ff6b6b;
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 10px 15px;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
+            font-weight: bold;
             transition: transform 0.2s;
         }
+        
         button:hover {
             transform: scale(1.05);
         }
@@ -45,23 +76,53 @@
 </head>
 <body>
 
-    <div class="card">
-        <h1>Привет! 🚀</h1>
-        <p>Это мой первый сайт, написанный с нуля.</p>
-        <p>Он работает прямо сейчас, без серверов.</p>
-        <button onclick="sendOrder()">Купить</button>
+    <div class="shop-header">
+        <h1>🛍️ Мой Магазин</h1>
+        <p>Выберите товар и нажмите «Купить»</p>
     </div>
 
-             <script>
+    <!-- Сюда будут добавляться карточки товаров -->
+    <div id="products-container"></div>
+
+    <script>
+        // 1. Инициализация Telegram
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
-                              function sendOrder() {
-            const TOKEN = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA"; // Вставь сюда новый токен
-            const CHAT_ID = "5569005187"; 
+        // === ВСТАВЬ СВОЙ АКТУАЛЬНЫЙ ТОКЕН СЮДА ===
+        const TOKEN = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA"; 
+        const CHAT_ID = "5569005187";
+
+        // 2. Наш каталог товаров (можешь менять названия, цены и картинки)
+        // Картинки я поставил случайные с сайта picsum, чтобы было красиво
+        const products = [
+            { id: 1, name: "Футболка 'Космос'", price: 1500, img: "https://picsum.photos/100/100?random=1" },
+            { id: 2, name: "Кружка 'Код'", price: 800, img: "https://picsum.photos/100/100?random=2" },
+            { id: 3, name: "Кепка 'Программист'", price: 1200, img: "https://picsum.photos/100/100?random=3" }
+        ];
+
+        // 3. Отрисовка карточек на странице
+        const container = document.getElementById('products-container');
+        
+        products.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <img src="${product.img}" alt="${product.name}" class="product-img">
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <p>${product.price} ₽</p>
+                </div>
+                <button onclick="buyProduct('${product.name}', ${product.price})">Купить</button>
+            `;
+            container.appendChild(card);
+        });
+
+        // 4. Функция отправки заказа в Telegram
+        function buyProduct(name, price) {
             const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-            const text = "🔥 Новый заказ из Mini App!";
+            const text = `🔥 Новый заказ!\nТовар: ${name}\nЦена: ${price} ₽`;
             
             fetch(url, {
                 method: 'POST',
@@ -71,7 +132,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.ok) {
-                    alert("✅ Заказ отправлен!");
+                    alert(`✅ Вы купили: ${name}!`);
                 } else {
                     alert("Ошибка Telegram: " + data.description);
                 }
