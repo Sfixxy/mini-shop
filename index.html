@@ -1,85 +1,55 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой Магазин</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; margin: 0; min-height: 100vh; }
-        .card { background: rgba(255,255,255,0.15); padding: 15px; border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .info h3 { margin: 0 0 5px 0; font-size: 16px; }
-        .info p { margin: 0; color: #ffd700; font-weight: bold; }
-        button { background: #ff6b6b; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        body { font-family: Arial; background: #667eea; color: white; padding: 20px; }
+        .card { background: rgba(255,255,255,0.2); padding: 15px; margin-bottom: 10px; border-radius: 8px; }
+        button { background: red; color: white; padding: 10px; border: none; border-radius: 5px; width: 100%; font-size: 16px; }
     </style>
 </head>
 <body>
-    <h2 style="text-align:center;">🛍️ Мой Магазин</h2>
-    <p style="text-align:center;">Выберите товар и нажмите «Купить»</p>
+    <h2>Магазин</h2>
+    
+    <div class="card">
+        <h3>Футболка</h3>
+        <p>1500 руб.</p>
+        <button onclick="sendOrder('Футболка', 1500)">КУПИТЬ</button>
+    </div>
 
-    <!-- Сюда будут добавляться карточки -->
-    <div id="products"></div>
+    <div class="card">
+        <h3>Кружка</h3>
+        <p>800 руб.</p>
+        <button onclick="sendOrder('Кружка', 800)">КУПИТЬ</button>
+    </div>
 
     <script>
-        // 1. Инициализация Telegram
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
 
-        // ВСТАВЬ СВОЙ ТОКЕН
-        const TOKEN = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA"; 
-        const ADMIN_ID = "5569005187";
-
-        // 2. Список товаров
-        const items = [
-            { id: 1, name: "Футболка 'Космос'", price: 1500 },
-            { id: 2, name: "Кружка 'Код'", price: 800 },
-            { id: 3, name: "Кепка 'Программист'", price: 1200 }
-        ];
-
-        // 3. Отрисовка карточек на странице
-        const container = document.getElementById('products');
-        items.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <div class="info">
-                    <h3>${item.name}</h3>
-                    <p>${item.price} ₽</p>
-                </div>
-                <button onclick="buy('${item.name}', ${item.price})">Купить</button>
-            `;
-            container.appendChild(card);
-        });
-
-        // 4. Функция покупки
-        function buy(name, price) {
-            const user = tg.initDataUnsafe?.user;
-            const clientId = user ? user.id : "Unknown";
-            const clientName = user ? (user.username ? "@" + user.username : user.first_name) : "Клиент";
-
-            const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+        function sendOrder(item, price) {
+            var token = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA";
+            var adminId = "5569005187";
             
-            // Отправляем заказ тебе (Админу)
-            const adminText = `🔥 Новый заказ!\nТовар: ${name}\nЦена: ${price} ₽\nКлиент: ${clientName}\nЕго ID: ${clientId}`;
+            // Данные для тебя
+            var textForAdmin = "Заказ: " + item + " за " + price + " руб.";
+            var urlAdmin = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + adminId + "&text=" + encodeURIComponent(textForAdmin);
             
-            fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: ADMIN_ID, text: adminText })
-            });
-
-            // Отправляем подтверждение клиенту (если известен его ID)
-            if (clientId !== "Unknown") {
-                const clientText = `✅ Спасибо за заказ!\nВы выбрали: ${name} (${price} ₽).\nОжидайте сообщения от менеджера.`;
-                fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: clientId, text: clientText })
-                });
+            fetch(urlAdmin);
+            
+            // Данные для клиента
+            var user = window.Telegram.WebApp.initDataUnsafe.user;
+            if (user) {
+                var clientId = user.id;
+                var textForClient = "Спасибо! Вы купили " + item + ". Менеджер свяжется с вами.";
+                var urlClient = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + clientId + "&text=" + encodeURIComponent(textForClient);
+                
+                fetch(urlClient);
             }
-
-            alert(`✅ Вы купили: ${name}! Ожидайте сообщения от бота.`);
+            
+            alert("Заказ отправлен!");
         }
     </script>
 </body>
