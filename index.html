@@ -397,7 +397,7 @@
             document.getElementById('admin-modal').style.display = 'none';
         }
 
-        function saveAdminSettings() {
+               function saveAdminSettings() {
             const checkboxes = document.querySelectorAll('#admin-flavors-list input[type="checkbox"]');
             let newStock = {};
 
@@ -405,13 +405,14 @@
                 newStock[cb.getAttribute('data-flavor')] = cb.checked;
             });
 
-            // Сохраняем в память телефона
+            // Сохраняем в память
             localStorage.setItem('vape_stock', JSON.stringify(newStock));
             
-            alert("✅ Настройки сохранены! Страница обновится.");
+            alert("✅ Настройки сохранены! Сейчас страница обновится, чтобы применить изменения.");
             
-            // ХИТРОСТЬ: Перезагружаем страницу, добавляя ?update=1, чтобы Telegram не взял старую версию
-            window.location.href = window.location.href.split('?')[0] + '?update=1'; 
+            // ФИНАЛЬНЫЙ КОСТЫЛЬ: случайный параметр в адресе
+            let randomHash = Math.random().toString(36).substring(7);
+            window.location.href = window.location.pathname + '?nocache=' + randomHash;
         }
 
         render();
