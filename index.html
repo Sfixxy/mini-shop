@@ -181,11 +181,11 @@
         function updateBtn() {
             const btn = document.getElementById('checkout-btn');
             if (cart.length > 0) {
-                let price = 16;
-                if (cart.length >= 100) price = 12;
-                else if (cart.length >= 50) price = 13;
-                else if (cart.length >= 30) price = 14;
-                else if (cart.length >= 10) price = 15;
+                let price = 15;
+                if (cart.length >= 100) price = 11;
+                else if (cart.length >= 50) price = 12;
+                else if (cart.length >= 30) price = 13;
+                else if (cart.length >= 10) price = 14;
                 
                 let total = cart.length * price;
                 btn.style.display = 'block';
