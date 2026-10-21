@@ -1,56 +1,261 @@
-import logging
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-
-# Твой Telegram ID (узнать можно у @userinfobot)
-ADMIN_ID = 5569005187 
-
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "Привет, Админ! Я готов принимать заказы.\n\n"
-        "Чтобы ответить клиенту, напиши:\n"
-        "/reply ID_клиента Текст сообщения\n\n"
-        "Пример: /reply 123456789 Ваш заказ готов!"
-    )
-
-async def reply_to_client(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # Проверяем, что команду дал именно ты (Админ)
-    if update.effective_user.id != ADMIN_ID:
-        await update.message.reply_text("У вас нет прав для этой команды.")
-        return
-
-    try:
-        # Разбираем команду: /reply 123456 Привет
-        args = context.args
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* ТЕМНАЯ ТЕМА (Вейп-Шоп) */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #0f0f13; /* Глубокий темный фон */
+            color: #e0e0e0; 
+            padding: 15px; 
+            padding-bottom: 100px; 
+            margin: 0; 
+        }
         
-        if len(args) < 2:
-            await update.message.reply_text("❌ Ошибка формата.\nПиши так: /reply ID_клиента Текст")
-            return
-
-        client_id = int(args[0]) # Первое слово после /reply — это ID
-        message_text = " ".join(args[1:]) # Всё остальное — это текст
-
-        # Отправляем сообщение клиенту
-        await context.bot.send_message(chat_id=client_id, text=message_text)
+        h2 { text-align: center; color: #b366ff; text-shadow: 0 0 10px rgba(179, 102, 255, 0.5); margin-bottom: 20px; font-weight: 800; letter-spacing: 1px; }
         
-        # Подтверждаем тебе, что всё ушло
-        await update.message.reply_text(f"✅ Сообщение успешно отправлено клиенту {client_id}")
+        /* Вкладки */
+        .tabs { display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn { 
+            flex: 1; background: #1c1c24; color: #888; padding: 12px; border: 1px solid #333; 
+            border-radius: 8px; font-size: 14px; white-space: nowrap; cursor: pointer; transition: 0.3s;
+        }
+        .tab-btn.active { 
+            background: #b366ff; color: #fff; border-color: #b366ff; 
+            box-shadow: 0 0 15px rgba(179, 102, 255, 0.4); font-weight: bold;
+        }
+        
+        /* Карточки */
+        .card { 
+            background: #1c1c24; padding: 20px; margin-bottom: 20px; 
+            border-radius: 12px; border: 1px solid #2a2a35;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        h3 { margin-top: 0; margin-bottom: 5px; font-size: 20px; color: #fff; }
+        p { margin-top: 0; margin-bottom: 15px; font-weight: bold; color: #00ffff; font-size: 15px; }
+        
+        /* Сетка вкусов */
+        .flavors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
+        .flavors-grid::-webkit-scrollbar { width: 6px; }
+        .flavors-grid::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+        
+        .flavor-checkbox { 
+            display: flex; align-items: center; background: #252530; padding: 10px; 
+            border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid transparent; transition: 0.2s;
+        }
+        .flavor-checkbox:hover { border-color: #b366ff; }
+        .flavor-checkbox input { margin-right: 10px; transform: scale(1.3); cursor: pointer; accent-color: #b366ff; }
+        
+        /* Кнопки */
+        button { 
+            background: linear-gradient(90deg, #b366ff, #7a33cc); color: white; padding: 14px; 
+            border: none; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; 
+            cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(179, 102, 255, 0.2);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(179, 102, 255, 0.4); }
+        button:active { transform: translateY(0); }
+        
+        /* Главная кнопка заказа */
+        #checkout-btn {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #00ffff;
+            color: #000; padding: 20px; font-size: 18px; border: none;
+            display: none; font-weight: bold; text-align: center; box-sizing: border-box; z-index: 100;
+            cursor: pointer; box-shadow: 0 -4px 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        /* Блок выбора метро */
+        #metro-section { display: none; background: #1c1c24; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #2a2a35; }
+        .line-btn { padding: 12px; border: none; border-radius: 8px; color: white; font-weight: bold; margin-bottom: 8px; width: 100%; cursor: pointer; transition: 0.2s; }
+        .line-btn:hover { opacity: 0.9; }
+        
+        /* ЦВЕТА ВЕТОК */
+        .red { background: #e74c3c; }
+        .blue { background: #3498db; }
+        .green { background: #2ecc71; }
+        
+        #stations-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
+        .station-btn { 
+            background: #252530; color: #ccc; border: 1px solid #444; font-size: 13px; padding: 10px; 
+            border-radius: 6px; cursor: pointer; transition: 0.2s;
+        }
+        .station-btn.selected { 
+            background: #b366ff; color: #fff; font-weight: bold; border-color: #b366ff; 
+            box-shadow: 0 0 10px rgba(179, 102, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <h2>VAPE SHOP</h2>
 
-    except ValueError:
-        await update.message.reply_text("❌ Ошибка: ID клиента должен быть числом (без букв и символов).")
-    except Exception as e:
-        await update.message.reply_text(f"❌ Не удалось отправить: {e}\nВозможно, клиент заблокировал бота.")
+    <div class="tabs">
+        <button class="tab-btn active" onclick="changeTab('10', event)">от 10 шт</button>
+        <button class="tab-btn" onclick="changeTab('30', event)">от 30 шт</button>
+        <button class="tab-btn" onclick="changeTab('50', event)">от 50 шт</button>
+        <button class="tab-btn" onclick="changeTab('100', event)">от 100 шт</button>
+    </div>
 
-if __name__ == '__main__':
-    TOKEN = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA" # ВСТАВЬ СВОЙ ТОКЕН БОТА
+    <div id="product-container"></div>
 
-    application = ApplicationBuilder().token(TOKEN).build()
+    <!-- Блок выбора метро -->
+    <div id="metro-section">
+        <h3 style="margin-top: 0; color: #fff;">🚇 Выберите ветку:</h3>
+        <button class="line-btn red" onclick="showLine('red')">🔴 Красная ветка</button>
+        <button class="line-btn blue" onclick="showLine('blue')">🔵 Синяя ветка</button>
+        <button class="line-btn green" onclick="showLine('green')">🟢 Зеленая ветка</button>
+        
+        <div id="stations-list"></div>
+    </div>
 
-    application.add_handler(CommandHandler("start", start))
-    # Обработчик команды /reply
-    application.add_handler(CommandHandler("reply", reply_to_client))
+    <button id="checkout-btn" onclick="toggleMetro()">🛒 Оформить заказ</button>
 
-    print("Бот запущен и ждет твоих команд...")
-    application.run_polling()
+    <script>
+        window.Telegram.WebApp.ready();
+        
+        let cart = [];
+        let currentTab = '10';
+        let selectedStation = "";
+        const PRICES = { '10': 15, '30': 14, '50': 13, '100': 12 };
+
+        // === СТАНЦИИ СТРОГО ПО ВЕТКАМ ===
+        const lines = {
+            red: ["Малиновка", "Петровщина", "Михалово", "Грушевка", "Институт культуры", "Площадь Ленина", "Октябрьская", "Площадь Победы", "Площадь Якуба Коласа", "Академия наук", "Парк Челюскинцев", "Московская", "Восток", "Борисовский тракт", "Уручье"],
+            blue: ["Каменная Горка", "Кунцевщина", "Спортивная", "Пушкинская", "Молодёжная", "Фрунзенская", "Немига", "Купаловская", "Первомайская", "Пролетарская", "Тракторный завод", "Партизанская", "Автозаводская", "Могилёвская"],
+            green: ["Слуцкий Гостинец", "Новаторская", "Вокзальная", "Ковальская Слобода", "Юбилейная площадь"]
+        };
+
+        // Вкусы
+        const flavorsData = {
+            catswill: { name: "🐱 Catswill", list: ["Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", "Лайм", "Банан", "Кокос", "Мята", "Ментол", "Мятный лимонад", "Мохито", "Кола", "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"] },
+            monashka: { name: "👧 Монашка", list: ["Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", "Лайм", "Банан", "Кокос", "Лесные ягоды", "Чёрная смородина", "Красная смородина", "Крыжовник", "Брусника", "Ice Grape", "Ice Strawberry", "Ice Peach", "Ice Mango", "Ice Watermelon", "Ice Melon", "Ice Black Currant", "Ice Lime", "Ice Mojito", "Ice Cola", "Ice Energy", "Кислая вишня", "Кислое яблоко", "Кислый арбуз", "Кислый мармелад", "Голубая малина", "Мята", "Ментол", "Лимонады", "Мохито", "Кола", "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"] },
+            podonki: { name: "🔹 Podonki", list: ["Яблоко (Apple)", "Груша (Pear)", "Клубника (Strawberry)", "Персик (Peach)", "Виноград (Grape)", "Арбуз (Watermelon)", "Дыня (Melon)", "Манго (Mango)", "Ананас (Pineapple)", "Вишня (Cherry)", "Лимон (Lemon)", "Апельсин (Orange)", "Малина (Raspberry)", "Черника (Blueberry)", "Банан (Banana)", "Кокос (Coconut)", "Мята (Mint)", "Ледяная мята (Ice Mint)", "Ментол (Menthol)", "Табак (Tobacco)", "Кофе (Coffee)", "Шоколад (Chocolate)", "Карамель (Caramel)", "Ваниль (Vanilla)", "Кислый мармелад (Sour Gummy)", "Кислая вишня (Sour Cherry)", "Кислое яблоко (Sour Apple)", "Кислый арбуз (Sour Watermelon)", "Ледяной виноград (Ice Grape)", "Ледяная клубника (Ice Strawberry)", "Ледяной персик (Ice Peach)", "Ледяной манго (Ice Mango)", "Ледяной ананас (Ice Pineapple)", "Ледяная дыня (Ice Melon)", "Ледяной арбуз (Ice Watermelon)", "Мятный лимонад (Mint Lemonade)", "Клубничный лимонад (Strawberry Lemonade)", "Малиновый лимонад (Raspberry Lemonade)", "Голубая малина (Blue Raspberry)", "Ежевика (Blackberry)", "Киви (Kiwi)", "Маракуйя (Passion Fruit)", "Гранат (Pomegranate)", "Лайм (Lime)", "Кола (Cola)", "Энергетик (Energy Drink)", "Йогурт (Yogurt)", "Крем-сода (Cream Soda)", "Мохито (Mojito)"] }
+        };
+
+        function changeTab(tab, e) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            render();
+        }
+
+        function render() {
+            const box = document.getElementById('product-container');
+            box.innerHTML = '';
+            
+            for (let key in flavorsData) {
+                const brand = flavorsData[key];
+                let checks = brand.list.map((f, i) => `
+                    <label class="flavor-checkbox">
+                        <input type="checkbox" value="${f}" data-brand="${key}">
+                        ${f}
+                    </label>
+                `).join('');
+
+                box.innerHTML += `
+                    <div class="card">
+                        <h3>${brand.name}</h3>
+                        <p>Цена: ${PRICES[currentTab]} руб/шт</p>
+                        <div class="flavors-grid">${checks}</div>
+                        <button onclick="addBrandToCart('${key}')">➕ Добавить выбранные</button>
+                    </div>
+                `;
+            }
+        }
+
+        function addBrandToCart(brandKey) {
+            const checkboxes = document.querySelectorAll(`input[data-brand="${brandKey}"]:checked`);
+            if (checkboxes.length === 0) {
+                alert("Выберите хотя бы один вкус!");
+                return;
+            }
+            checkboxes.forEach(cb => {
+                cart.push({ brand: flavorsData[brandKey].name, flavor: cb.value });
+                cb.checked = false;
+            });
+            updateBtn();
+            alert("Добавлено!");
+        }
+
+        function updateBtn() {
+            const btn = document.getElementById('checkout-btn');
+            if (cart.length > 0) {
+                let price = 16;
+                if (cart.length >= 100) price = 12;
+                else if (cart.length >= 50) price = 13;
+                else if (cart.length >= 30) price = 14;
+                else if (cart.length >= 10) price = 15;
+                
+                let total = cart.length * price;
+                btn.style.display = 'block';
+                btn.innerText = `🛒 Оформить (${cart.length} шт.) на ${total} руб.`;
+            } else {
+                btn.style.display = 'none';
+            }
+        }
+
+        function toggleMetro() {
+            const sec = document.getElementById('metro-section');
+            if (sec.style.display === 'none' || sec.style.display === '') {
+                sec.style.display = 'block';
+                document.getElementById('checkout-btn').innerText = "✅ Подтвердить заказ";
+                document.getElementById('checkout-btn').onclick = submitOrder;
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+        }
+
+        function showLine(line) {
+            const list = document.getElementById('stations-list');
+            list.innerHTML = '';
+            lines[line].forEach(st => {
+                const btn = document.createElement('button');
+                btn.className = 'station-btn';
+                btn.innerText = st;
+                btn.onclick = () => {
+                    document.querySelectorAll('.station-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedStation = st;
+                };
+                list.appendChild(btn);
+            });
+        }
+
+        function submitOrder() {
+            if (!selectedStation) {
+                alert("⚠️ Выберите станцию метро!");
+                return;
+            }
+
+            const token = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA";
+            const adminId = "5569005187";
+            let user = window.Telegram.WebApp.initDataUnsafe?.user;
+            
+            let price = 16;
+            if (cart.length >= 100) price = 12;
+            else if (cart.length >= 50) price = 13;
+            else if (cart.length >= 30) price = 14;
+            else if (cart.length >= 10) price = 15;
+            let total = cart.length * price;
+
+            let items = {};
+            cart.forEach(i => { let k = `${i.brand} [${i.flavor}]`; items[k] = (items[k] || 0) + 1; });
+            let text = "";
+            for (let k in items) text += `${k} - ${items[k]} шт.\n`;
+
+            let msgAdmin = `🔥 Заказ!\n${text}\nИтого: ${total} руб.\n🚇 ${selectedStation}\nКлиент: @${user?.username || user?.first_name}\nID: ${user?.id}`;
+            fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${adminId}&text=${encodeURIComponent(msgAdmin)}`);
+
+            if (user?.id) {
+                let msgClient = `✅ Спасибо! Вы заказали:\n${text}\nИтого: ${total} руб.\n🚇 ${selectedStation}`;
+                fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${user.id}&text=${encodeURIComponent(msgClient)}`);
+            }
+
+            alert("Заказ отправлен!");
+            location.reload();
+        }
+
+        render();
+    </script>
+</body>
+</html>
