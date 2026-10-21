@@ -52,24 +52,24 @@
         <button onclick="sendOrder()">Купить</button>
     </div>
 
-       <script>
-function sendOrder() {
-    // Данные, которые мы отправим боту
-    const orderData = {
-        action: "buy",
-        product: "Тестовый товар",
-        price: 1000
-    };
-    
-    // Отправляем данные в Telegram
-    window.Telegram.WebApp.sendData(JSON.stringify(orderData));
-    
-    // Можно закрыть приложение после заказа (по желанию)
-    // window.Telegram.WebApp.close(); 
-}
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
-        // Это JavaScript — логика сайта
+           <script>
+        // 1. Сначала инициализируем Telegram
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        // 2. Описываем функцию отправки
+        function sendOrder() {
+            const orderData = {
+                action: "buy",
+                product: "Тестовый товар",
+                price: 1000
+            };
+            
+            // Отправляем данные
+            tg.sendData(JSON.stringify(orderData));
+        }
+
         console.log("Сайт успешно загружен!");
     </script>
 </body>
