@@ -26,7 +26,7 @@
         tg.ready();
         tg.expand();
 
-        // ВСТАВЬ СВОЙ ТОКЕН (если менял в BotFather)
+        // ВСТАВЬ СВОЙ ТОКЕН
         const TOKEN = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA"; 
         const ADMIN_ID = "5569005187";
 
@@ -54,7 +54,6 @@
 
         // 4. Функция покупки
         function buy(name, price) {
-            // Получаем данные клиента
             const user = tg.initDataUnsafe?.user;
             const clientId = user ? user.id : "Unknown";
             const clientName = user ? (user.username ? "@" + user.username : user.first_name) : "Клиент";
@@ -70,7 +69,7 @@
                 body: JSON.stringify({ chat_id: ADMIN_ID, text: adminText })
             });
 
-            // Отправляем подтверждение клиенту
+            // Отправляем подтверждение клиенту (если известен его ID)
             if (clientId !== "Unknown") {
                 const clientText = `✅ Спасибо за заказ!\nВы выбрали: ${name} (${price} ₽).\nОжидайте сообщения от менеджера.`;
                 fetch(url, {
