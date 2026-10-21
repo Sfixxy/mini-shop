@@ -215,8 +215,8 @@
                 let checks = '';
 
                 brand.list.forEach((f, i) => {
-                    // Если товара нет в наличии и мы не админ — скрываем его
-                    if (inStock[f] === false && (!user || user.id !== ADMIN_ID)) return;
+                    // Если товара нет в наличии — скрываем его у всех
+                    if (inStock[f] === false) return;
 
                     checks += `
                         <label class="flavor-checkbox">
@@ -398,6 +398,7 @@
                 let html = `<h4 style="color: #00ffff; margin-bottom: 5px; margin-top: 15px;">${brand.name}</h4>`;
                 
                 brand.list.forEach(f => {
+                    // В админке всегда показываем ВСЕ товары (чтобы можно было включить обратно)
                     let isChecked = inStock[f] !== false ? 'checked' : '';
                     html += `
                         <label style="display: block; margin-bottom: 5px; font-size: 14px; cursor: pointer;">
