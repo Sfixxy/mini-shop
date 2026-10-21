@@ -49,7 +49,7 @@
         <h1>Привет! 🚀</h1>
         <p>Это мой первый сайт, написанный с нуля.</p>
         <p>Он работает прямо сейчас, без серверов.</p>
-        <button> onclick="alert('Кнопка работает!')">Купить</button>
+        <button onclick="sendOrder()">Купить</button>
     </div>
 
              <script>
@@ -57,14 +57,10 @@
         tg.ready();
         tg.expand();
 
-                       function sendOrder() {
-            // ВСТАВЬ СЮДА НОВЫЙ ТОКЕН (тот, с которым сработал тест)
-            const TOKEN = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA"; 
+                              function sendOrder() {
+            const TOKEN = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA"; // Вставь сюда новый токен
             const CHAT_ID = "5569005187"; 
-            
             const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-            
-            // Текст, который придет в Telegram
             const text = "🔥 Новый заказ из Mini App!";
             
             fetch(url, {
@@ -76,7 +72,6 @@
             .then(data => {
                 if (data.ok) {
                     alert("✅ Заказ отправлен!");
-                    // window.Telegram.WebApp.close(); // Можно раскомментировать, чтобы окно закрывалось
                 } else {
                     alert("Ошибка Telegram: " + data.description);
                 }
