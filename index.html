@@ -34,7 +34,9 @@
             var adminId = "5569005187";
             
             // 1. Отправляем заказ тебе
-            var textForAdmin = "Заказ: " + item + " за " + price + " руб.";
+                        var user = window.Telegram.WebApp.initDataUnsafe ? window.Telegram.WebApp.initDataUnsafe.user : null;
+            var clientName = user ? (user.username ? "@" + user.username : user.first_name) : "Неизвестный";
+            var textForAdmin = "Заказ: " + item + " за " + price + " руб.\nКлиент: " + clientName;
             var urlAdmin = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + adminId + "&text=" + encodeURIComponent(textForAdmin);
             fetch(urlAdmin);
             
