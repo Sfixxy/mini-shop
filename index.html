@@ -6,88 +6,79 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="data.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f0f13; color: #e0e0e0; padding: 15px; padding-bottom: 100px; margin: 0; }
-        h2 { text-align: center; color: #b366ff; margin-bottom: 20px; font-weight: 800; }
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; }
-        .tab-btn { flex: 1; background: #1c1c24; color: #888; padding: 12px; border: 1px solid #333; border-radius: 8px; font-size: 14px; white-space: nowrap; cursor: pointer; }
-        .tab-btn.active { background: #b366ff; color: #fff; border-color: #b366ff; font-weight: bold; }
-        .category-btn { background: #252530; padding: 20px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #333; cursor: pointer; text-align: center; font-size: 18px; font-weight: bold; color: #fff; display: block; width: 100%; }
-        .category-btn:hover { border-color: #b366ff; background: #2a2a35; }
-        .brand-btn { display: flex; justify-content: space-between; align-items: center; background: #1c1c24; padding: 15px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #2a2a35; cursor: pointer; font-size: 16px; font-weight: bold; }
-        .brand-btn:hover { border-color: #b366ff; }
-        .back-btn { background: #333; color: #fff; padding: 10px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; border: none; font-weight: bold; width: 100%; }
-        .flavors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; max-height: 300px; overflow-y: auto; }
-        .flavor-checkbox { display: flex; align-items: center; background: #252530; padding: 10px; border-radius: 8px; font-size: 13px; cursor: pointer; }
-        .flavor-checkbox input { margin-right: 10px; }
-        button.action-btn { background: #b366ff; color: white; padding: 14px; border: none; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
-        #checkout-btn { position: fixed; bottom: 0; left: 0; width: 100%; background: #00ffff; color: #000; padding: 20px; font-size: 18px; border: none; display: none; font-weight: bold; text-align: center; z-index: 100; }
-        #cart-section { display: none; background: #1c1c24; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2a2a35; }
-        .cart-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #333; font-size: 13px; }
-        .delete-btn { background: #e74c3c; color: white; border: none; border-radius: 5px; padding: 5px 8px; cursor: pointer; }
+        body { font-family: Arial; background: #0f0f13; color: white; padding: 20px; }
+        button { display: block; width: 100%; padding: 15px; margin-bottom: 10px; background: #b366ff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; }
     </style>
 </head>
 <body>
     <h2>VAPE SHOP</h2>
-
-    <div class="tabs">
-        <button class="tab-btn active">от 10 шт</button>
-        <button class="tab-btn">от 30 шт</button>
-        <button class="tab-btn">от 50 шт</button>
-        <button class="tab-btn">от 100 шт</button>
+    
+    <div id="menu">
+        <button onclick="showCat('liquids')">💨 Жидкости</button>
+        <button onclick="showCat('pods')">📱 Поды</button>
+        <button onclick="showCat('coils')">⚙️ Картриджи</button>
+        <button onclick="showCat('snus')">🍬 Снюс</button>
     </div>
 
-    <div id="screen-categories">
-        <button class="category-btn" onclick="openCategory('liquids')">💨 Жидкости</button>
-        <button class="category-btn" onclick="openCategory('pods')">📱 Поды (Одноразки)</button>
-        <button class="category-btn" onclick="openCategory('coils')">⚙️ Картриджи и Испарители</button>
-        <button class="category-btn" onclick="openCategory('snus')">🍬 Снюс и Никобустеры</button>
-    </div>
-
-    <div id="screen-brands" style="display: none;">
-        <button class="back-btn" onclick="goToCategories()">← Назад</button>
+    <div id="brands" style="display: none;">
+        <button onclick="goBack()">← Назад</button>
         <div id="brands-list"></div>
     </div>
 
-    <div id="screen-flavors" style="display: none;">
-        <button class="back-btn" onclick="goToBrands()">← Назад</button>
+    <div id="flavors" style="display: none;">
+        <button onclick="goToBrands()">← Назад к брендам</button>
         <h3 id="flavors-title"></h3>
-        <div class="flavors-grid" id="flavors-container"></div>
-        <button class="action-btn" onclick="addSelectedToCart()">➕ Добавить</button>
+        <div id="flavors-list"></div>
     </div>
-
-    <div id="cart-section">
-        <h3 style="color: #00ffff; font-size: 16px;">🛒 Корзина:</h3>
-        <div id="cart-list"></div>
-        <button onclick="clearCart()" style="background:#444; color:#fff; margin-top:10px; padding:10px; width:100%; border:none; border-radius:5px;">🗑 Очистить</button>
-    </div>
-
-    <button id="checkout-btn" onclick="alert('Тут будет метро и отправка!')">🛒 Оформить заказ</button>
 
     <script>
-        let cart = [];
         let currentCategory = "";
         let currentBrand = "";
 
-        function openCategory(cat) {
+        function showCat(cat) {
             currentCategory = cat;
-            document.getElementById('screen-categories').style.display = 'none';
-            document.getElementById('screen-brands').style.display = 'block';
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('brands').style.display = 'block';
+            
             const list = document.getElementById('brands-list');
             list.innerHTML = '';
+            
             for (let brand in DB[cat]) {
-                const div = document.createElement('div');
-                div.className = 'brand-btn';
-                div.innerHTML = `<span>${brand}</span>`;
-                div.onclick = () => openBrand(brand);
-                list.appendChild(div);
+                const btn = document.createElement('button');
+                btn.innerText = brand;
+                btn.onclick = () => showFlavors(brand);
+                list.appendChild(btn);
             }
         }
 
-        function goToCategories() {
-            document.getElementById('screen-brands').style.display = 'none';
-            document.getElementById('screen-categories').style.display = 'block';
+        function goBack() {
+            document.getElementById('brands').style.display = 'none';
+            document.getElementById('menu').style.display = 'block';
         }
 
-        function openBrand(brand) {
+        function showFlavors(brand) {
             currentBrand = brand;
-            document.getElementById('screen
+            document.getElementById('brands').style.display = 'none';
+            document.getElementById('flavors').style.display = 'block';
+            document.getElementById('flavors-title').innerText = brand;
+            
+            const list = document.getElementById('flavors-list');
+            list.innerHTML = '';
+            
+            DB[currentCategory][brand].forEach(f => {
+                const div = document.createElement('div');
+                div.style.padding = '10px';
+                div.style.background = '#1c1c24';
+                div.style.marginBottom = '5px';
+                div.innerText = f;
+                list.appendChild(div);
+            });
+        }
+
+        function goToBrands() {
+            document.getElementById('flavors').style.display = 'none';
+            document.getElementById('brands').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
