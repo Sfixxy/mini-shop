@@ -7,26 +7,19 @@
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0f0f13; color: #e0e0e0; padding: 15px; padding-bottom: 100px; margin: 0; }
         h2 { text-align: center; color: #b366ff; margin-bottom: 20px; font-weight: 800; }
-        
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; }
         .tab-btn { flex: 1; background: #1c1c24; color: #888; padding: 12px; border: 1px solid #333; border-radius: 8px; font-size: 14px; white-space: nowrap; cursor: pointer; }
         .tab-btn.active { background: #b366ff; color: #fff; border-color: #b366ff; font-weight: bold; }
-
         .category-btn { background: #252530; padding: 20px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #333; cursor: pointer; text-align: center; font-size: 18px; font-weight: bold; color: #fff; display: block; width: 100%; }
         .category-btn:hover { border-color: #b366ff; background: #2a2a35; }
-        
         .brand-btn { display: flex; justify-content: space-between; align-items: center; background: #1c1c24; padding: 15px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #2a2a35; cursor: pointer; font-size: 16px; font-weight: bold; }
         .brand-btn:hover { border-color: #b366ff; }
-
         .back-btn { background: #333; color: #fff; padding: 10px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; border: none; font-weight: bold; width: 100%; }
         .flavors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; max-height: 300px; overflow-y: auto; }
         .flavor-checkbox { display: flex; align-items: center; background: #252530; padding: 10px; border-radius: 8px; font-size: 13px; cursor: pointer; }
         .flavor-checkbox input { margin-right: 10px; }
-
         button.action-btn { background: #b366ff; color: white; padding: 14px; border: none; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
-        
         #checkout-btn { position: fixed; bottom: 0; left: 0; width: 100%; background: #00ffff; color: #000; padding: 20px; font-size: 18px; border: none; display: none; font-weight: bold; text-align: center; z-index: 100; }
-        
         #cart-section { display: none; background: #1c1c24; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2a2a35; }
         .cart-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #333; font-size: 13px; }
         .delete-btn { background: #e74c3c; color: white; border: none; border-radius: 5px; padding: 5px 8px; cursor: pointer; }
@@ -42,7 +35,6 @@
         <button class="tab-btn">от 100 шт</button>
     </div>
 
-    <!-- ЭКРАН 1: КАТЕГОРИИ -->
     <div id="screen-categories">
         <button class="category-btn" onclick="openCategory('liquids')">💨 Жидкости</button>
         <button class="category-btn" onclick="openCategory('pods')">📱 Поды (Одноразки)</button>
@@ -50,13 +42,11 @@
         <button class="category-btn" onclick="openCategory('snus')">🍬 Снюс и Никобустеры</button>
     </div>
 
-    <!-- ЭКРАН 2: БРЕНДЫ -->
     <div id="screen-brands" style="display: none;">
         <button class="back-btn" onclick="goToCategories()">← Назад</button>
         <div id="brands-list"></div>
     </div>
 
-    <!-- ЭКРАН 3: ВКУСЫ -->
     <div id="screen-flavors" style="display: none;">
         <button class="back-btn" onclick="goToBrands()">← Назад</button>
         <h3 id="flavors-title"></h3>
@@ -73,20 +63,53 @@
     <button id="checkout-btn" onclick="alert('Тут будет метро и отправка!')">🛒 Оформить заказ</button>
 
     <script>
-        // === БАЗА ДАННЫХ ===
         const DB = {
             liquids: {
                 "CHROME BASIC": ["Манго Ананас 20мг"],
                 "CHROME PINK": ["Баблгамм 20мг", "Кактусовая груша 20мг", "Клубничный пончик с молоком 20мг", "Кокос и ананас 20мг", "Розовая гуава 20мг"],
                 "Foggy": ["Лимончелло 70мг", "Парфе 70мг", "Пудинг 70мг", "Темный смузи 70мг"],
                 "Husky white 20мг": ["Cheam peak - Ледяная жвачка манго", "Cold passion - Ледяная маракуйя", "FANGERINE - Ледяная фанта с мандарином", "Pataya head - Ледяной ананасовый сок с лимоном", "Snow sorbet - Ледяное дынное мороженное", "Steep slope - Ледяной персик и клубничные конфеты", "Sweet vale - Ледяные конфеты с личи"],
+                "Husky white 50мг": ["Buzzz - Ледяная черника с арбузом 45MG", "Cheam peak - Ледяная жвачка манго 45MG", "Cold passion - Ледяная маракуйя 45MG", "Fangerine - Ледяная фанта с мандарином 45MG", "Mint wind - Ледяная мятная жвачка 45MG", "Pataya head - Ледяной ананасовый сок с лимоном 45MG", "Pink lemonade - Ледяной малиновый лимонад 45MG", "Snow sorbet - Ледяное дынное мороженное 45MG", "Steep slope - Ледяной персик и клубничные конфеты 45MG", "Sweet vale - Ледяные конфеты с личи 45MG"],
                 "MAD 60": ["Apple Passion Fruit - Яблоко Маракуйя", "Bubble Gum - Бабл Гам", "Candies - Конфеты", "Cherry Cola - Вишня Кола", "Cold Mango - Ледяной Манго", "Ice Lychee - Ледяной Личи", "Kiwi pineapple - Киви ананас", "Lime Grapes - Виноград Лайм", "Melon - Дыня", "Milkshake - Молочный коктейль", "Mix Tropic - Тропический Микс", "Orange Soda - Апельсиновая Содовая", "Paspberry Tea - Малиновый чай", "Peach Raspberry Lemonade - Персик Малина Лимонад"],
                 "JACKPOT 50": ["Candy pear peach melon", "Cherries", "Cherries pineapple", "Cherry mango apricot", "Cherry pomegranate ice cream", "Cinnabon banana", "Mandarin mango ice", "Melon kiwi apple", "Needles lime", "Papaya lime", "Passion fruit", "Passion fruit mango", "Passion fruit peach", "Plum peach", "Pomelo kiwi", "Pomelo lemon lime", "Quince apricot lemon", "Strawberry nectarine", "Tobacco cherry", "Tobacco mint"],
                 "PROFESSOR 50": ["Cappuccino candy", "Cherry lime", "Cherry Mango Аpricot", "Cherry watermelon", "Cola pineapple lime", "Gum apricot ice", "Kiwi quince", "Mango coffee", "Melon Аpricot", "Nectarine ice", "Orange needles", "Papaya mango", "Passion fruit grapefruit", "Passion fruit pineapple cranberry", "Pineapple Coconut", "Plum peach pineapple", "Pomelo black currant needles", "Pomelo grapefruit", "Power engineer cherry", "Tobacco cherry"],
                 "WEDNESDAY 50": ["Apple menthol ice", "Banana coconut grapefruit ice", "Berries ice", "Coca cola ice", "Coconut ice", "Currant cowberry ice", "Energy apple ice", "Grapefruit blueberry ice", "Lemon blueberry ice", "Lime lemon ice", "Lychee ice", "Magic fruit ice", "Mandarin ice", "Mango ice", "Melon berries ice", "Peach ice", "Pineapple ice", "Raspberry blueberry ice", "Raspberry gum mint", "Strawberry kiwi ice"],
                 "Phantom": ["Ананас 70mg"],
                 "SAYONARA 60мг": ["Арбузная жвачка", "Лимон лайм скиттлс", "Малиновый мармелад", "Черная смородина лимонад"],
-                "Skala Lemonade 50MG": ["Апельсиновый лимонад", "Вишнево яблочный компот", "Вишневый швепс", "Гранатовый сок смородина лимон", "Грушевый лимонад с мятой", "Спрайт с вишней", "Спрайт скиттлс", "Тархун"]
+                "Skala 50MG": ["Энергетик цитрус"],
+                "Skala ice 50MG": ["Яблоко ежевика"],
+                "Skala Lemonade 50MG": ["Апельсиновый лимонад", "Вишнево яблочный компот", "Вишневый швепс", "Гранатовый сок смородина лимон", "Грушевый лимонад с мятой", "Спрайт с вишней", "Спрайт скиттлс", "Тархун"],
+                "Skala sour 50MG": ["Зеленое яблоко лимон", "Кислая ежевика с лаймом", "Кислая клубника с лаймом", "Кислый ананасс малиной", "Кислый вишневый сорбет с мятой", "Кислый гранат с вишней", "Кислый киви гуава", "Кислый крыжовник виноград", "Кислый мохито", "Кислый скитлс"],
+                "SKL 50mg": ["Апельсиновые конфеты", "Лимонный чизкейк"],
+                "THE BUSHIDO 50MG": ["Апельсин мята", "Арбуз лайм", "Зеленое яблоко", "Клубнично черничный йогурт", "Ледяное киви", "Малина ежевика", "Мармеладные мишки", "Персик груша", "Черная смородина мята", "Черника со льдом", "Энергетик клюква", "Энергетик холодный барбарис"],
+                "Toxic updade ↑": ["Миринда апельсин", "Смородиновый холс"],
+                "Ultra HARDER 60MG": ["АПЕЛЬСИН МАНГО МАРАКУЙЯ", "АРБУЗ", "ВИНОГРАД", "ЖВАЧКА ЧЕРНАЯ СМОРОДИНА", "КИВИ КЛУБНИКА", "КЛУБНИКА ЗЕМЛЯНИКА", "МАЛИНА", "СМОРОДИНА И МАРАКУЯ", "СМОРОДИНА С МЯТОЙ", "ЧЕРРИ СОДА", "ЭНЕРГЕТИК ЯГОДЫ", "ЯБЛОКО"],
+                "Ultra V2 HARDER 70MG": ["КАКТУС", "КИВИ И КРЫЖОВНИК", "МОРС КЛЮКВА И БРУСНИКА"],
+                "ХАСКИ НА АЛЯСКЕ 2ICE 20Мг": ["Апельсин лайм", "Вишня лайм", "Вишня личи", "Киви банан", "Лимонад малина вишня", "Лимон мята", "Личи гуава арбуз", "Манго дыня", "Милкшейк клубнично черничный", "Персик киви", "Персик мандарин", "Персиковый чай", "Черешня земляника", "Черная смородина виноград", "Черника земляника", "Черника клубника", "Энергетик тропические фрукты", "Яблоко мятный чай", "Ягодное мороженное"],
+                "ХАСКИ НА АЛЯСКЕ 2ICE 50Мг": ["Апельсин лайм", "Арбуз малина", "Арбузная жвачка", "Вишня личи", "Киви банан", "Лимонад малина вишня", "Лимон мята", "Личи гуава арбуз", "Манго дыня", "Мандарин", "Милкшейк клубнично черничный", "Персик киви", "Персик мандарин", "Персиковый чай", "Черешня земляника", "Черника земляника", "Черника клубника", "Энергетик тропические фрукты", "Яблоко мятный чай", "Ягодное мороженное"],
+                "ХАСКИ НА АЛЯСКЕ MIXED 50 мг": ["апероль", "клубника со сливками", "клубничный милкшейк", "мякоть манго с тержерином"],
+                "ХАСКИ НА АЛЯСКЕ SOUR 20Мг": ["Вишня абрикос", "Вишня жимолость", "Киви лайм", "Клубника лимон", "Клюква брусника", "Клюква-мандарин", "Костяника крыжовник", "Красная смородина", "Крыжовник", "Лаймовый щербет", "Малина айва", "Малина грейпфрут", "Манго апельсин", "Мандарин лимон", "Черешня клюква", "Черника апельсин", "Черника крыжовник", "Черника лимон", "Энергетик барбарис карамель", "Энергетик киви клюква", "Яблоко киви", "Яблоко клюква"],
+                "ХАСКИ НА АЛЯСКЕ SOUR 50Мг": ["Вишня жимолость", "Клубника лимон", "Клюква брусника", "Клюква-мандарин", "Костяника крыжовник", "Крыжовник", "Лаймовый щербет", "Малина айва", "Малина грейпфрут", "Манго апельсин", "Мандарин лимон", "Черника апельсин", "Черника крыжовник", "Черника лимон", "Энергетик барбарис карамель", "Яблоко клюква"],
+                "ANNIMA LOVE 50Мг": ["Клубника банан", "Клубника киви", "Морс из диких ягод", "Смородиновый лимонад", "Черника гранат"],
+                "BJORN HEADSHOT 100 MG": ["Абрикос груша (Frost)", "Абрикос лимонад (Crazy)", "Ананас кокос (Frost)", "Банан с кислинкой (Acid)", "Брусника яблоко (Crazy)", "Гранат мандарин (Acid)", "Гранат яблоко (Frost)", "Грейпфрут сибирские ягоды (Blast)", "Груша брусника (Crazy)", "Дыня клюква (Crazy)", "Киви алоэ (Blast)", "Киви арбуз (Frost)", "Клубника с кислинкой (Acid)", "Малина клюква (Blast)", "Нектарин вишня (Blast)", "Персик с кислинкой (Acid)", "Слива лимонад (Crazy)", "Черника брусника (Acid)", "Яблочный skittles (Blast)"],
+                "Bjorn joker 20MG": ["Хаоапеньо лайм"],
+                "Bjorn long V2 80мг": ["Cайгонская гуава", "Cицилийский апельсин грейпфрут", "Алое груша наджу", "Амазонский асаи черника", "Анатолийский гранат черешня", "Андалуэское помело груша", "Балийский драгонфрут груша", "Гоа манго гималайская облепиха", "Сикоку юдзу энергетик", "Тайский ананас кокос", "Тибетский белый персик алоэ", "Цейлонский цитрус мед", "Цитрус набим маракуйя", "Юкатайский лайм розовый цитрус"],
+                "BJORN ZLOY V1.0": ["Арбузная жвачка", "Виноград Алоэ", "Виноград Вишня", "Вишня", "Грейпфрут с черешней", "Киви клубника", "Кислая малина", "Лесные ягоды", "Маракуйя ананас", "Скитлз", "Черника апельсин", "Энергетик виноград"],
+                "BJORN ZLOY V2.0 60МГ": ["Apple peach - Яблоко персик", "Apple raspberry - Яблоко малина", "Berry drink - Ягодный напиток", "Blueberry lemon - Черника лимон", "Blueberry raspberry pomegranate - Черника малина гранат", "Cranberry watermelon - Клюква арбуз", "Cucumber strawberry basil - Огурец клубника базилик", "Energy drink passion fruit - Энергетик маракуя", "Fanta Passion Fruit - Фанта маракуйя", "Grapes marmalade marshmallow - Виноград мармелад маршмеллоу", "Kiwi apricot - Киви абрикос", "Kiwi Pineapple - Киви Ананас", "Mango raspberry - Манго малина", "Mojito - Мохито", "Peach - Персик", "Raspberry soda - Малиновая газировка", "Strawberry lemonade - Клубничный лимонад", "Vanilla cherry -Ваниль вишня"],
+                "Bjorn сон призрака 50MG": ["Ананас манго", "Вишневая кола со льдом", "Киви маракуйя гуава", "Кислое яблоко", "Кислый лимон киви", "Ледяная клубника личи", "Лесные ягоды с холодком", "Лимон лайм", "Личи со льдом", "Манго со льдом", "Маракуйя апельсин гуава", "Маракуйя мандарин", "Черника грейпфрут", "Энергетитик", "Яблоко персик"],
+                "Bjorn сон призрака FRESH": ["Ананас манго 80MG", "Брусника виноград 80MG", "Гранат апельсин 80MG", "Ежевика клубника 80MG", "Киви банан 80MG", "Клубника апельсин 80MG", "Яблоко персик 80MG"],
+                "Bjorn сон призрака ICE": ["Вишневая кола лед 80MG", "Ледяная клубника личи 80MG", "Манго лед 80MG", "Маракуйя манго 80MG", "Тропический лед 80MG", "Черника грейпфрут 80MG", "Яблоко грейпфрут 80MG"],
+                "Bjorn сон призрака SOUR": ["Ананас грейпфрут 80MG", "Киви маракуйя гуава 80MG", "Кислое яблоко 80MG", "Манго лимон 80MG", "Мандарин киви 80MG", "Маракуйя апельсин гуава 80MG", "Маракуйя мандарин 80MG", "Ментос кислая груша 80MG", "Персик клюква 80MG", "Цитрусовый лимонад 80MG", "Абрикосовый компот 80MG", "Банан груша 80MG", "Редбулл груша 80MG", "Харибо мармелад 80MG"],
+                "Bjorn сон призрака WILD": ["Жвачка турбо 80MG"],
+                "BJORN ТЕМНЫЙ ХОР 80mg": ["Кислый грейпфрут", "Мятная жвачка", "Чистая мята", "Эвкалипт мята"],
+                "CandyLab": ["Bake:D apple cinnamin caramel", "Nectarine strudel", "Pineapple waffle", "Strawberry donut"],
+                "CATSWILL 20MG": ["Имбирный лимонад с малиной", "Кислые Яблочные Червячки", "Кислый малиновый скитлс", "Клубника арбуз жвачка", "Мятная Жвачка"],
+                "CATSWILL 50MG": ["Ананасовый сироп с виноградом лед", "Апельсин персик шипучка", "Виноград изабелла алоэ", "Вишневые Леденцы", "Вишневый ледяной спрайт", "Вишня персик мята", "Груша лайм мята", "Гуава малина ментол", "Желатинки манго персик арбуз", "Имбирный лимонад с малиной", "Йогурт клубника маракуйя", "Киви лайм шипучка лед", "Киви Лёд Кислинка", "Кислая Фруктовая Жвачка", "Кислые Червячки с Малиной и Черешней", "Кислые Яблочные Червячки", "Кислый Виноградный Чупа чупс", "Кислый малиновый скитлс", "Кислый Скитлс", "Клубника виноград мята", "Клубника Жвачка Банан", "Клубника Киви", "Клубнично арбузная хуба-буба", "Клубнично вишневая конфета", "Ледяная клубника лимон", "Ледяная малина персик", "Ледяное манго малина", "Ледяной розовый грейпфрут", "Лимонад ежевика сироп", "Лимонад черника лайм", "Малина Лёд Ежевика", "Мамба кислое яблоко киви", "Мамба манго апельсин", "Морозная клубника с кислинкой", "Морозная черника лайм", "Морозные Лесные Ягоды", "Морозный апельсин маракуйя", "Мятная Жвачка", "Скитлс с виноградом изабелла", "Сладкий апельсин груша лед", "Сладкое манго черная смородина", "Табак арбуз айс", "Табак виноград айс", "Табак жвачка айс", "Табак карамель айс", "Табак ментол айс", "Табак персик манго айс", "Табак черника малина лед", "Табак яблоко айс", "Хайповый энергетик с черникой", "Черника Лёд Ежевика", "Черника малина лимонад", "Чернично арбузная хуба-буба", "Чернично клубничный фреш", "Чупа-чупс киви апельсин", "Яблочный лимонад лайм"],
+                "CATSWILL EXTRA HARD 20MG": ["Кислая яблочная хубба-бубба", "Скитлс кактус лимон"],
+                "CATSWILL&MALASIAN": ["йогуртовый краш - ЙОГУРТ ЧЕРЕШНЯ БАНАН", "цитрусовый циклон - ЦИТРУС, ЛИЧИ, ЛИМОН"],
+                "CATSWILL PREMIUM MEDIUM": ["Банан манго", "Малина лимон", "Киви малина", "Клубничный энергетик", "Лайм черника"],
+                "CATSWILL SOUR 20MG": ["Кислая газировка груша лимон", "Кислая газировка с черной смородиной и клюквой", "Кислая фанта апельсин виноград", "Кислая фанта с черникой", "Кислая яблочная конфета груша", "Кислая яблочно-клубничная шипучка", "Кислое земляничное мохито", "Кислое харибо с колой и черешней", "Кислое яблоко маракуйя", "Кислые дольки с персиком и клубникой", "Кислые желатинки апельсин персик", "Кислые желатинки с маракуйей и ананасом", "Кислые леденцы груша ежевика", "Кислые леденцы ежевика", "Кислые ленточки апельсин клубника", "Кислые ленточки лимон кола", "Кислые ленточки с маракуйей и манго", "Кислые мармеладные ягоды", "Кислые яблочно-лимонные колечки", "Кислый виноград с лаймом", "Кислый грейпфрут с вишней", "Кислый леденец с виноградом, киви и яблоком", "Кислый лимонад из арбуза лайм и малина", "Кислый скитлс апельсин яблоко", "Кислый скитлс виноград ежевика", "Кислый скитлс малина ананас", "Кислый чупа-чупс грейпфрут клубника", "Кислый чупа-чупс лайм малина", "Фанта апельсин с кислой малиной", "Яблочная кислинка"],
+                "CATSWILL SOUR 50": ["Кислая газировка груша лимон", "Кислая газировка малина виноград", "Кислая газировка с черной смородиной и клюквой", "Кислая фанта апельсин виноград", "Кислая фанта с черникой", "Кислая яблочная конфета груша", "Кислая яблочно-клубничная шипучка", "Кислое земляничное мохито", "Кислое харибо с колой и черешней", "Кислое яблоко маракуйя", "Кислые дольки с персиком и клубникой", "Кислые желатинки апельсин персик", "Кислые желатинки с маракуйей и ананасом", "Кислые леденцы груша ежевика", "Кислые леденцы ежевика", "Кислые ленточки апельсин клубника", "Кислые ленточки лимон кола", "Кислые ленточки с маракуйей и манго", "Кислые мармеладные ягоды", "Кислые яблочно-лимонные колечки", "Кислый виноград с лаймом", "Кислый грейпфрут с вишней", "Кислый леденец с виноградом, киви и яблоком", "Кислый лимонад из арбуза лайм и малина", "Кислый скитлс апельсин яблоко", "Кислый скитлс виноград ежевика", "Кислый скитлс малина ананас", "Кислый чупа-чупс грейпфрут клубника", "Кислый чупа-чупс лайм малина", "Фанта апельсин с кислой малиной", "Яблочная кислинка"]
             },
             pods: {
                 "Maxflay 30000": ["Апельсин лимон", "Капучино", "Лимон лайм", "Медовая дыня", "Молочный шоколад", "Перечная мята", "Смешанные ягоды"],
@@ -110,10 +133,8 @@
             currentCategory = cat;
             document.getElementById('screen-categories').style.display = 'none';
             document.getElementById('screen-brands').style.display = 'block';
-            
             const list = document.getElementById('brands-list');
             list.innerHTML = '';
-            
             for (let brand in DB[cat]) {
                 const div = document.createElement('div');
                 div.className = 'brand-btn';
@@ -133,65 +154,8 @@
             document.getElementById('screen-brands').style.display = 'none';
             document.getElementById('screen-flavors').style.display = 'block';
             document.getElementById('flavors-title').innerText = brand;
-            
             const container = document.getElementById('flavors-container');
             container.innerHTML = '';
-            
             DB[currentCategory][brand].forEach(f => {
                 const label = document.createElement('label');
-                label.className = 'flavor-checkbox';
-                label.innerHTML = `<input type="checkbox" value="${f}" class="flavor-check"> ${f}`;
-                container.appendChild(label);
-            });
-        }
-
-        function goToBrands() {
-            document.getElementById('screen-flavors').style.display = 'none';
-            document.getElementById('screen-brands').style.display = 'block';
-        }
-
-        function addSelectedToCart() {
-            const checked = document.querySelectorAll('.flavor-check:checked');
-            if (checked.length === 0) { alert("Выбери вкус!"); return; }
-            checked.forEach(cb => {
-                cart.push({ brand: currentBrand, flavor: cb.value });
-                cb.checked = false;
-            });
-            alert("Добавлено!");
-            updateUI();
-        }
-
-        function updateUI() {
-            const btn = document.getElementById('checkout-btn');
-            const cartSection = document.getElementById('cart-section');
-            const cartList = document.getElementById('cart-list');
-
-            if (cart.length > 0) {
-                btn.style.display = 'block';
-                btn.innerText = `🛒 Оформить (${cart.length} шт.)`;
-                cartSection.style.display = 'block';
-                cartList.innerHTML = ''; 
-                cart.forEach((item, index) => {
-                    const div = document.createElement('div');
-                    div.className = 'cart-item';
-                    div.innerHTML = `<span>${item.brand} - ${item.flavor}</span><button class="delete-btn" onclick="removeItem(${index})">X</button>`;
-                    cartList.appendChild(div);
-                });
-            } else {
-                btn.style.display = 'none';
-                cartSection.style.display = 'none';
-            }
-        }
-
-        function removeItem(index) {
-            cart.splice(index, 1); 
-            updateUI();
-        }
-
-        function clearCart() {
-            cart = []; 
-            updateUI();
-        }
-    </script>
-</body>
-</html>
+                label.class
