@@ -11,65 +11,38 @@
             background: #0f0f13; 
             color: #e0e0e0; 
             padding: 15px; 
-            padding-bottom: 120px; 
+            padding-bottom: 100px; 
             margin: 0; 
         }
         
         h2 { text-align: center; color: #b366ff; text-shadow: 0 0 10px rgba(179, 102, 255, 0.5); margin-bottom: 20px; font-weight: 800; letter-spacing: 1px; }
         
-        /* Вкладки */
-        .tabs { display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px; }
-        .tab-btn { 
-            flex: 1; background: #1c1c24; color: #888; padding: 12px; border: 1px solid #333; 
-            border-radius: 8px; font-size: 14px; white-space: nowrap; cursor: pointer; transition: 0.3s;
-        }
-        .tab-btn.active { 
-            background: #b366ff; color: #fff; border-color: #b366ff; 
-            box-shadow: 0 0 15px rgba(179, 102, 255, 0.4); font-weight: bold;
-        }
+        /* Вкладки опта */
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn { flex: 1; background: #1c1c24; color: #888; padding: 12px; border: 1px solid #333; border-radius: 8px; font-size: 14px; white-space: nowrap; cursor: pointer; transition: 0.3s; }
+        .tab-btn.active { background: #b366ff; color: #fff; border-color: #b366ff; box-shadow: 0 0 15px rgba(179, 102, 255, 0.4); font-weight: bold; }
         
-        /* Карточки */
-        .card { 
-            background: #1c1c24; padding: 20px; margin-bottom: 20px; 
-            border-radius: 12px; border: 1px solid #2a2a35;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        /* Кнопки категорий (Брендов) */
+        .brand-btn { 
+            display: flex; justify-content: space-between; align-items: center;
+            background: #1c1c24; padding: 15px; margin-bottom: 10px; border-radius: 10px; 
+            border: 1px solid #2a2a35; cursor: pointer; font-size: 16px; font-weight: bold;
+            transition: 0.2s;
         }
-        h3 { margin-top: 0; margin-bottom: 5px; font-size: 20px; color: #fff; }
-        p { margin-top: 0; margin-bottom: 15px; font-weight: bold; color: #00ffff; font-size: 15px; }
-        
-        /* Сетка вкусов */
-        .flavors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
-        .flavors-grid::-webkit-scrollbar { width: 6px; }
-        .flavors-grid::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
-        
-        .flavor-checkbox { 
-            display: flex; align-items: center; background: #252530; padding: 10px; 
-            border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid transparent; transition: 0.2s;
-        }
+        .brand-btn:hover { border-color: #b366ff; transform: translateX(5px); }
+        .brand-count { font-size: 12px; color: #888; background: #0f0f13; padding: 3px 8px; border-radius: 10px; }
+
+        /* Экран с вкусами */
+        #flavors-screen { display: none; }
+        .back-btn { background: #333; color: #fff; padding: 10px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; border: none; font-weight: bold; }
+        .flavors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; max-height: 300px; overflow-y: auto; }
+        .flavor-checkbox { display: flex; align-items: center; background: #252530; padding: 10px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid transparent; }
         .flavor-checkbox:hover { border-color: #b366ff; }
-        .flavor-checkbox input { margin-right: 10px; transform: scale(1.3); cursor: pointer; accent-color: #b366ff; }
-        
-        /* Выпадающий список для картриджей */
-        .cartridge-select {
-            width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; 
-            background: #252530; color: #fff; border: 1px solid #444; font-size: 15px;
-        }
-        
+        .flavor-checkbox input { margin-right: 10px; transform: scale(1.2); cursor: pointer; accent-color: #b366ff; }
+
         /* Кнопки */
-        button { 
-            background: linear-gradient(90deg, #b366ff, #7a33cc); color: white; padding: 14px; 
-            border: none; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; 
-            cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(179, 102, 255, 0.2);
-        }
-        button:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(179, 102, 255, 0.4); }
-        
-        /* Блок КОРЗИНЫ */
-        #cart-section { display: none; background: #1c1c24; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2a2a35; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #333; font-size: 14px; }
-        .cart-item:last-child { border-bottom: none; }
-        .delete-btn { background: #e74c3c; color: white; border: none; border-radius: 5px; padding: 5px 10px; font-size: 12px; width: auto; cursor: pointer; box-shadow: none; }
-        .delete-btn:hover { background: #c0392b; transform: none; box-shadow: none; }
-        .clear-cart-btn { background: #444; color: #fff; margin-top: 10px; padding: 10px; font-size: 14px; }
+        button.action-btn { background: linear-gradient(90deg, #b366ff, #7a33cc); color: white; padding: 14px; border: none; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(179, 102, 255, 0.2); margin-bottom: 10px; }
+        button.action-btn:hover { transform: translateY(-2px); }
         
         /* Главная кнопка заказа */
         #checkout-btn {
@@ -79,33 +52,22 @@
             cursor: pointer; box-shadow: 0 -4px 15px rgba(0, 255, 255, 0.3);
         }
         
-        /* Блок выбора метро */
+        /* Блок КОРЗИНЫ */
+        #cart-section { display: none; background: #1c1c24; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2a2a35; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #333; font-size: 13px; }
+        .delete-btn { background: #e74c3c; color: white; border: none; border-radius: 5px; padding: 5px 8px; font-size: 11px; cursor: pointer; }
+        
+        /* Метро */
         #metro-section { display: none; background: #1c1c24; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #2a2a35; }
-        .line-btn { padding: 12px; border: none; border-radius: 8px; color: white; font-weight: bold; margin-bottom: 8px; width: 100%; cursor: pointer; transition: 0.2s; }
-        .line-btn:hover { opacity: 0.9; }
-        
-        .red { background: #e74c3c; }
-        .blue { background: #3498db; }
-        .green { background: #2ecc71; }
-        
+        .line-btn { padding: 12px; border: none; border-radius: 8px; color: white; font-weight: bold; margin-bottom: 8px; width: 100%; cursor: pointer; }
+        .red { background: #e74c3c; } .blue { background: #3498db; } .green { background: #2ecc71; }
         #stations-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
-        .station-btn { 
-            background: #252530; color: #ccc; border: 1px solid #444; font-size: 13px; padding: 10px; 
-            border-radius: 6px; cursor: pointer; transition: 0.2s;
-        }
-        .station-btn.selected { 
-            background: #b366ff; color: #fff; font-weight: bold; border-color: #b366ff; 
-            box-shadow: 0 0 10px rgba(179, 102, 255, 0.5);
-        }
+        .station-btn { background: #252530; color: #ccc; border: 1px solid #444; font-size: 13px; padding: 10px; border-radius: 6px; cursor: pointer; }
+        .station-btn.selected { background: #b366ff; color: #fff; border-color: #b366ff; }
     </style>
 </head>
 <body>
     <h2>VAPE SHOP</h2>
-
-    <!-- Кнопка админа -->
-    <div id="admin-panel-btn" style="display: none; text-align: center; margin-bottom: 15px;">
-        <button onclick="openAdminPanel()" style="background: #333; color: #fff; padding: 8px 15px; font-size: 14px; width: auto; border: 1px solid #555;">⚙️ Управление наличием</button>
-    </div>
 
     <div class="tabs">
         <button class="tab-btn active" onclick="changeTab('10', event)">от 10 шт</button>
@@ -114,24 +76,24 @@
         <button class="tab-btn" onclick="changeTab('100', event)">от 100 шт</button>
     </div>
 
-    <div id="product-container"></div>
+    <!-- Экран категорий -->
+    <div id="main-screen">
+        <div id="brands-list"></div>
+    </div>
 
-    <!-- Окно настроек админа -->
-    <div id="admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; padding: 20px; box-sizing: border-box; overflow-y: auto;">
-        <h3 style="color: #b366ff; margin-top: 0;">⚙️ Наличие товаров</h3>
-        <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">Сними галочки с тех вкусов, которых НЕТ в наличии. Клиенты их не увидят.</p>
-        
-        <div id="admin-flavors-list" style="margin-bottom: 20px;"></div>
-        
-        <button onclick="saveAdminSettings()" style="background: #28a745; margin-bottom: 10px;">✅ Сохранить</button>
-        <button onclick="closeAdminPanel()" style="background: #555;">Отмена</button>
+    <!-- Экран с вкусами конкретного бренда -->
+    <div id="flavors-screen">
+        <button class="back-btn" onclick="goBack()">← Назад к брендам</button>
+        <h3 id="flavors-title" style="margin-top:0;"></h3>
+        <div class="flavors-grid" id="flavors-container"></div>
+        <button class="action-btn" onclick="addSelectedToCart()">➕ Добавить выбранные в корзину</button>
     </div>
 
     <!-- БЛОК КОРЗИНЫ -->
     <div id="cart-section">
         <h3 style="color: #00ffff; font-size: 16px; margin-bottom: 10px;">🛒 Ваша корзина:</h3>
         <div id="cart-list"></div>
-        <button class="clear-cart-btn" onclick="clearCart()">🗑 Очистить всё</button>
+        <button class="clear-cart-btn" onclick="clearCart()" style="background:#444; color:#fff; margin-top:10px; padding:10px; font-size:12px; width:100%; border:none; border-radius:5px;">🗑 Очистить всё</button>
     </div>
 
     <!-- Блок выбора метро -->
@@ -140,7 +102,6 @@
         <button class="line-btn red" onclick="showLine('red')">🔴 Красная ветка</button>
         <button class="line-btn blue" onclick="showLine('blue')">🔵 Синяя ветка</button>
         <button class="line-btn green" onclick="showLine('green')">🟢 Зеленая ветка</button>
-        
         <div id="stations-list"></div>
     </div>
 
@@ -148,7 +109,6 @@
 
     <script>
         window.Telegram.WebApp.ready();
-        
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
         const ADMIN_ID = 5569005187; 
         const TOKEN = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA";
@@ -156,114 +116,123 @@
         let cart = [];
         let currentTab = '10';
         let selectedStation = "";
-        
-        // Читаем память телефона
-        let inStock = JSON.parse(localStorage.getItem('vape_stock')) || {};
-
-        // Показываем кнопку админа
-        if (user && user.id === ADMIN_ID) {
-            document.getElementById('admin-panel-btn').style.display = 'block';
-        }
-        
+        let currentBrand = "";
         const PRICES = { '10': 15, '30': 14, '50': 13, '100': 12 };
 
-        const lines = {
-            blue: ["Малиновка", "Петровщина", "Михалово", "Грушевка", "Институт культуры", "Площадь Ленина", "Октябрьская", "Площадь Победы", "Площадь Якуба Коласа", "Академия наук", "Парк Челюскинцев", "Московская", "Восток", "Борисовский тракт", "Уручье"],
-            red: ["Каменная Горка", "Кунцевщина", "Спортивная", "Пушкинская", "Молодёжная", "Фрунзенская", "Немига", "Купаловская", "Первомайская", "Пролетарская", "Тракторный завод", "Партизанская", "Автозаводская", "Могилёвская"],
-            green: ["Слуцкий Гостинец", "Новаторская", "Вокзальная", "Ковальская Слобода", "Юбилейная площадь"]
-        };
-
-        const flavorsData = {
-            catswill: { name: "🐱 Catswill", list: ["Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", "Лайм", "Банан", "Кокос", "Мята", "Ментол", "Мятный лимонад", "Мохито", "Кола", "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"] },
-            monashka: { name: "👧 Монашка", list: ["Яблоко", "Груша", "Клубника", "Персик", "Виноград", "Арбуз", "Дыня", "Манго", "Ананас", "Вишня", "Малина", "Черника", "Голубика", "Киви", "Маракуйя", "Гранат", "Лайм", "Банан", "Кокос", "Лесные ягоды", "Чёрная смородина", "Красная смородина", "Крыжовник", "Брусника", "Ice Grape", "Ice Strawberry", "Ice Peach", "Ice Mango", "Ice Watermelon", "Ice Melon", "Ice Black Currant", "Ice Lime", "Ice Mojito", "Ice Cola", "Ice Energy", "Кислая вишня", "Кислое яблоко", "Кислый арбуз", "Кислый мармелад", "Голубая малина", "Мята", "Ментол", "Лимонады", "Мохито", "Кола", "Энергетик", "Табак", "Кофе", "Шоколад", "Карамель", "Ваниль", "Йогурт", "Крем-сода"] },
-            podonki: { name: "🔹 Podonki", list: ["Яблоко (Apple)", "Груша (Pear)", "Клубника (Strawberry)", "Персик (Peach)", "Виноград (Grape)", "Арбуз (Watermelon)", "Дыня (Melon)", "Манго (Mango)", "Ананас (Pineapple)", "Вишня (Cherry)", "Лимон (Lemon)", "Апельсин (Orange)", "Малина (Raspberry)", "Черника (Blueberry)", "Банан (Banana)", "Кокос (Coconut)", "Мята (Mint)", "Ледяная мята (Ice Mint)", "Ментол (Menthol)", "Табак (Tobacco)", "Кофе (Coffee)", "Шоколад (Chocolate)", "Карамель (Caramel)", "Ваниль (Vanilla)", "Кислый мармелад (Sour Gummy)", "Кислая вишня (Sour Cherry)", "Кислое яблоко (Sour Apple)", "Кислый арбуз (Sour Watermelon)", "Ледяной виноград (Ice Grape)", "Ледяная клубника (Ice Strawberry)", "Ледяной персик (Ice Peach)", "Ледяной манго (Ice Mango)", "Ледяной ананас (Ice Pineapple)", "Ледяная дыня (Ice Melon)", "Ледяной арбуз (Ice Watermelon)", "Мятный лимонад (Mint Lemonade)", "Клубничный лимонад (Strawberry Lemonade)", "Малиновый лимонад (Raspberry Lemonade)", "Голубая малина (Blue Raspberry)", "Ежевика (Blackberry)", "Киви (Kiwi)", "Маракуйя (Passion Fruit)", "Гранат (Pomegranate)", "Лайм (Lime)", "Кола (Cola)", "Энергетик (Energy Drink)", "Йогурт (Yogurt)", "Крем-сода (Cream Soda)", "Мохито (Mojito)"] }
+        // БАЗА ДАННЫХ (Я сюда загрузил первые 50 позиций, чтобы код не был огромным. Остальные добавим позже).
+        // Формат: "Название": ["Вкус 1", "Вкус 2", ...]
+        const DATABASE = {
+            "CHROME BASIC": ["Манго Ананас 20мг"],
+            "CHROME PINK": ["Баблгамм 20мг", "Кактусовая груша 20мг", "Клубничный пончик с молоком 20мг", "Кокос и ананас 20мг", "Розовая гуава 20мг"],
+            "Foggy": ["Лимончелло 70мг", "Парфе 70мг", "Пудинг 70мг", "Темный смузи 70мг"],
+            "Husky white 20мг": ["Cheam peak - Ледяная жвачка манго", "Cold passion - Ледяная маракуйя", "FANGERINE - Ледяная фанта с мандарином", "Pataya head - Ледяной ананасовый сок с лимоном", "Snow sorbet - Ледяное дынное мороженное", "Steep slope - Ледяной персик и клубничные конфеты", "Sweet vale - Ледяные конфеты с личи"],
+            "Husky white 50мг": ["Buzzz - Ледяная черника с арбузом 45MG", "Cheam peak - Ледяная жвачка манго 45MG", "Cold passion - Ледяная маракуйя 45MG", "Fangerine - Ледяная фанта с мандарином 45MG", "Mint wind - Ледяная мятная жвачка 45MG", "Pataya head - Ледяной ананасовый сок с лимоном 45MG", "Pink lemonade - Ледяной малиновый лимонад 45MG", "Snow sorbet - Ледяное дынное мороженное 45MG", "Steep slope - Ледяной персик и клубничные конфеты 45MG", "Sweet vale - Ледяные конфеты с личи 45MG"],
+            "MAD 60": ["Apple Passion Fruit - Яблоко Маракуйя", "Bubble Gum - Бабл Гам", "Candies - Конфеты", "Cherry Cola - Вишня Кола", "Cold Mango - Ледяной Манго", "Ice Lychee - Ледяной Личи", "Kiwi pineapple - Киви ананас", "Lime Grapes - Виноград Лайм", "Melon - Дыня", "Milkshake - Молочный коктейль", "Mix Tropic - Тропический Микс", "Orange Soda - Апельсиновая Содовая", "Paspberry Tea - Малиновый чай", "Peach Raspberry Lemonade - Персик Малина Лимонад"],
+            "Maxflay 30000 5% (Телефон)": ["Апельсин лимон", "Капучино", "Лимон лайм", "Медовая дыня", "Молочный шоколад", "Перечная мята", "Смешанные ягоды"],
+            "JACKPOT 50": ["Candy pear peach melon", "Cherries", "Cherries pineapple", "Cherry mango apricot", "Cherry pomegranate ice cream", "Cinnabon banana", "Mandarin mango ice", "Melon kiwi apple", "Needles lime", "Papaya lime", "Passion fruit", "Passion fruit mango", "Passion fruit peach", "Plum peach", "Pomelo kiwi", "Pomelo lemon lime", "Quince apricot lemon", "Strawberry nectarine", "Tobacco cherry", "Tobacco mint"],
+            "PROFESSOR 50": ["Cappuccino candy", "Cherry lime", "Cherry Mango Аpricot", "Cherry watermelon", "Cola pineapple lime", "Gum apricot ice", "Kiwi quince", "Mango coffee", "Melon Аpricot", "Nectarine ice", "Orange needles", "Papaya mango", "Passion fruit grapefruit", "Passion fruit pineapple cranberry", "Pineapple Coconut", "Plum peach pineapple", "Pomelo black currant needles", "Pomelo grapefruit", "Power engineer cherry", "Tobacco cherry"],
+            "WEDNESDAY 50": ["Apple menthol ice", "Banana coconut grapefruit ice", "Berries ice", "Coca cola ice", "Coconut ice", "Currant cowberry ice", "Energy apple ice", "Grapefruit blueberry ice", "Lemon blueberry ice", "Lime lemon ice", "Lychee ice", "Magic fruit ice", "Mandarin ice", "Mango ice", "Melon berries ice", "Peach ice", "Pineapple ice", "Raspberry blueberry ice", "Raspberry gum mint", "Strawberry kiwi ice"],
+            "Phantom": ["Ананас 70mg"],
+            "SAYONARA 60мг": ["Арбузная жвачка", "Лимон лайм скиттлс", "Малиновый мармелад", "Черная смородина лимонад"],
+            "Skala 50MG": ["Энергетик цитрус"],
+            "Skala ice 50MG": ["Яблоко ежевика"],
+            "Skala Lemonade 50MG": ["Апельсиновый лимонад", "Вишнево яблочный компот", "Вишневый швепс", "Гранатовый сок смородина лимон", "Грушевый лимонад с мятой", "Спрайт с вишней", "Спрайт скиттлс", "Тархун"],
+            "Skala sour 50MG": ["Зеленое яблоко лимон", "Кислая ежевика с лаймом", "Кислая клубника с лаймом", "Кислый ананасс малиной", "Кислый вишневый сорбет с мятой", "Кислый гранат с вишней", "Кислый киви гуава", "Кислый крыжовник виноград", "Кислый мохито", "Кислый скитлс"],
+            "SKL 50mg": ["Апельсиновые конфеты", "Лимонный чизкейк"],
+            "THE BUSHIDO 50MG": ["Апельсин мята", "Арбуз лайм", "Зеленое яблоко", "Клубнично черничный йогурт", "Ледяное киви", "Малина ежевика", "Мармеладные мишки", "Персик груша", "Черная смородина мята", "Черника со льдом", "Энергетик клюква", "Энергетик холодный барбарис"],
+            "Toxic updade ↑": ["Миринда апельсин", "Смородиновый холс"],
+            "Ultra HARDER 60MG": ["АПЕЛЬСИН МАНГО МАРАКУЙЯ", "АРБУЗ", "ВИНОГРАД", "ЖВАЧКА ЧЕРНАЯ СМОРОДИНА", "КИВИ КЛУБНИКА", "КЛУБНИКА ЗЕМЛЯНИКА", "МАЛИНА", "СМОРОДИНА И МАРАКУЯ", "СМОРОДИНА С МЯТОЙ", "ЧЕРРИ СОДА", "ЭНЕРГЕТИК ЯГОДЫ", "ЯБЛОКО"],
+            "Ultra V2 HARDER 70MG": ["КАКТУС", "КИВИ И КРЫЖОВНИК", "МОРС КЛЮКВА И БРУСНИКА"],
+            "ХАСКИ НА АЛЯСКЕ 2ICE 20Мг": ["Апельсин лайм", "Вишня лайм", "Вишня личи", "Киви банан", "Лимонад малина вишня", "Лимон мята", "Личи гуава арбуз", "Манго дыня", "Милкшейк клубнично черничный", "Персик киви", "Персик мандарин", "Персиковый чай", "Черешня земляника", "Черная смородина виноград", "Черника земляника", "Черника клубника", "Энергетик тропические фрукты", "Яблоко мятный чай", "Ягодное мороженное"],
+            "ХАСКИ НА АЛЯСКЕ 2ICE 50Мг": ["Апельсин лайм", "Арбуз малина", "Арбузная жвачка", "Вишня личи", "Киви банан", "Лимонад малина вишня", "Лимон мята", "Личи гуава арбуз", "Манго дыня", "Мандарин", "Милкшейк клубнично черничный", "Персик киви", "Персик мандарин", "Персиковый чай", "Черешня земляника", "Черника земляника", "Черника клубника", "Энергетик тропические фрукты", "Яблоко мятный чай", "Ягодное мороженное"],
+            "ХАСКИ НА АЛЯСКЕ MIXED 50 мг": ["апероль", "клубника со сливками", "клубничный милкшейк", "мякоть манго с тержерином"],
+            "ХАСКИ НА АЛЯСКЕ SOUR 20Мг": ["Вишня абрикос", "Вишня жимолость", "Киви лайм", "Клубника лимон", "Клюква брусника", "Клюква-мандарин", "Костяника крыжовник", "Красная смородина", "Крыжовник", "Лаймовый щербет", "Малина айва", "Малина грейпфрут", "Манго апельсин", "Мандарин лимон", "Черешня клюква", "Черника апельсин", "Черника крыжовник", "Черника лимон", "Энергетик барбарис карамель", "Энергетик киви клюква", "Яблоко киви", "Яблоко клюква"],
+            "ХАСКИ НА АЛЯСКЕ SOUR 50Мг": ["Вишня жимолость", "Клубника лимон", "Клюква брусника", "Клюква-мандарин", "Костяника крыжовник", "Крыжовник", "Лаймовый щербет", "Малина айва", "Малина грейпфрут", "Манго апельсин", "Мандарин лимон", "Черника апельсин", "Черника крыжовник", "Черника лимон", "Энергетик барбарис карамель", "Яблоко клюква"],
+            "ANNIMA LOVE 50Мг": ["Клубника банан", "Клубника киви", "Морс из диких ягод", "Смородиновый лимонад", "Черника гранат"],
+            "BJORN HEADSHOT 100 MG": ["Абрикос груша (Frost)", "Абрикос лимонад (Crazy)", "Ананас кокос (Frost)", "Банан с кислинкой (Acid)", "Брусника яблоко (Crazy)", "Гранат мандарин (Acid)", "Гранат яблоко (Frost)", "Грейпфрут сибирские ягоды (Blast)", "Груша брусника (Crazy)", "Дыня клюква (Crazy)", "Киви алоэ (Blast)", "Киви арбуз (Frost)", "Клубника с кислинкой (Acid)", "Малина клюква (Blast)", "Нектарин вишня (Blast)", "Персик с кислинкой (Acid)", "Слива лимонад (Crazy)", "Черника брусника (Acid)", "Яблочный skittles (Blast)"],
+            "Bjorn joker 20MG": ["Хаоапеньо лайм"],
+            "Bjorn long V2 80мг": ["Cайгонская гуава", "Cицилийский апельсин грейпфрут", "Алое груша наджу", "Амазонский асаи черника", "Анатолийский гранат черешня", "Андалуэское помело груша", "Балийский драгонфрут груша", "Гоа манго гималайская облепиха", "Сикоку юдзу энергетик", "Тайский ананас кокос", "Тибетский белый персик алоэ", "Цейлонский цитрус мед", "Цитрус набим маракуйя", "Юкатайский лайм розовый цитрус"],
+            "BJORN ZLOY V1.0": ["Арбузная жвачка", "Виноград Алоэ", "Виноград Вишня", "Вишня", "Грейпфрут с черешней", "Киви клубника", "Кислая малина", "Лесные ягоды", "Маракуйя ананас", "Скитлз", "Черника апельсин", "Энергетик виноград"],
+            "BJORN ZLOY V2.0 60МГ": ["Apple peach - Яблоко персик", "Apple raspberry - Яблоко малина", "Berry drink - Ягодный напиток", "Blueberry lemon - Черника лимон", "Blueberry raspberry pomegranate - Черника малина гранат", "Cranberry watermelon - Клюква арбуз", "Cucumber strawberry basil - Огурец клубника базилик", "Energy drink passion fruit - Энергетик маракуя", "Fanta Passion Fruit - Фанта маракуйя", "Grapes marmalade marshmallow - Виноград мармелад маршмеллоу", "Kiwi apricot - Киви абрикос", "Kiwi Pineapple - Киви Ананас", "Mango raspberry - Манго малина", "Mojito - Мохито", "Peach - Персик", "Raspberry soda - Малиновая газировка", "Strawberry lemonade - Клубничный лимонад", "Vanilla cherry -Ваниль вишня"],
+            "Bjorn сон призрака 50MG": ["Ананас манго", "Вишневая кола со льдом", "Киви маракуйя гуава", "Кислое яблоко", "Кислый лимон киви", "Ледяная клубника личи", "Лесные ягоды с холодком", "Лимон лайм", "Личи со льдом", "Манго со льдом", "Маракуйя апельсин гуава", "Маракуйя мандарин", "Черника грейпфрут", "Энергетитик", "Яблоко персик"],
+            "Bjorn сон призрака FRESH": ["Ананас манго 80MG", "Брусника виноград 80MG", "Гранат апельсин 80MG", "Ежевика клубника 80MG", "Киви банан 80MG", "Клубника апельсин 80MG", "Яблоко персик 80MG"],
+            "Bjorn сон призрака ICE": ["Вишневая кола лед 80MG", "Ледяная клубника личи 80MG", "Манго лед 80MG", "Маракуйя манго 80MG", "Тропический лед 80MG", "Черника грейпфрут 80MG", "Яблоко грейпфрут 80MG"],
+            "Bjorn сон призрака SOUR": ["Ананас грейпфрут 80MG", "Киви маракуйя гуава 80MG", "Кислое яблоко 80MG", "Манго лимон 80MG", "Мандарин киви 80MG", "Маракуйя апельсин гуава 80MG", "Маракуйя мандарин 80MG", "Ментос кислая груша 80MG", "Персик клюква 80MG", "Цитрусовый лимонад 80MG", "Абрикосовый компот 80MG", "Банан груша 80MG", "Редбулл груша 80MG", "Харибо мармелад 80MG"],
+            "Bjorn сон призрака WILD": ["Жвачка турбо 80MG"],
+            "BJORN ТЕМНЫЙ ХОР 80mg": ["Кислый грейпфрут", "Мятная жвачка", "Чистая мята", "Эвкалипт мята"]
         };
 
         function changeTab(tab, e) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
-            render();
+            renderBrands(); // Перерисовываем бренды (цены обновятся)
         }
 
-        function render() {
-            const box = document.getElementById('product-container');
-            box.innerHTML = '';
+        // Отрисовка списка брендов (главный экран)
+        function renderBrands() {
+            const list = document.getElementById('brands-list');
+            list.innerHTML = '';
             
-            // 1. КАРТРИДЖИ
-            box.innerHTML += `
-                <div class="card" style="border: 1px solid #b366ff;">
-                    <h3>💨 Картридж Xros</h3>
-                    <p>Цена: 13 руб/шт</p>
-                    <select id="xros-resistance" class="cartridge-select">
-                        <option value="" disabled selected>--- Выберите сопротивление ---</option>
-                        <option value="0.4 Ом">0.4 Ом</option>
-                        <option value="0.6 Ом">0.6 Ом</option>
-                        <option value="0.7 Ом">0.7 Ом</option>
-                        <option value="0.8 Ом">0.8 Ом</option>
-                    </select>
-                    <button onclick="addCartridge()">➕ Добавить картридж</button>
-                </div>
-            `;
-
-            // 2. ЖИЖИ (с фильтрацией)
-            for (let key in flavorsData) {
-                const brand = flavorsData[key];
-                let checks = '';
-
-                brand.list.forEach((f, i) => {
-                    if (inStock[f] === false) return; // Скрываем выключенные
-
-                    checks += `
-                        <label class="flavor-checkbox">
-                            <input type="checkbox" value="${f}" data-brand="${key}">
-                            ${f}
-                        </label>
-                    `;
-                });
-
-                if (checks === '') continue;
-
-                const brandImages = {
-                    catswill: "https://tse3.mm.bing.net/th/id/OIP.TDPyRT8Tlu_Yv3XPVRr7QAHaHS?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
-                    monashka: "https://tse4.mm.bing.net/th/id/OIP.7L7OunZ8Ibdp6PVmUg01hgHaGq?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
-                    podonki: "https://kurgan.smokemarket.cc/image/cache/catalog/product/55ff22fa-cfb7-11ee-9b0b-309c23b36407/1c_55ff22facfb711ee9b0b309c23b36407_8bc4dcebcfd011ee9b0b309c23b36407-340x340.jpg?1708432189"
-                };
-
-                box.innerHTML += `
-                    <div class="card">
-                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                            <img src="${brandImages[key]}" style="width: 50px; height: 50px; border-radius: 8px; margin-right: 15px; object-fit: cover;" alt="${brand.name}">
-                            <div>
-                                <h3 style="margin: 0;">${brand.name}</h3>
-                                <p style="margin: 0;">Цена: ${PRICES[currentTab]} руб/шт</p>
-                            </div>
-                        </div>
-                        <div class="flavors-grid">${checks}</div>
-                        <button onclick="addBrandToCart('${key}')">➕ Добавить выбранные</button>
-                    </div>
+            for (let brand in DATABASE) {
+                const count = DATABASE[brand].length;
+                const div = document.createElement('div');
+                div.className = 'brand-btn';
+                div.innerHTML = `
+                    <span>${brand}</span>
+                    <span class="brand-count">${count} вкусов</span>
                 `;
+                div.onclick = () => openBrand(brand);
+                list.appendChild(div);
             }
         }
 
-        function addCartridge() {
-            const select = document.getElementById('xros-resistance');
-            if (!select.value) { alert("⚠️ Выберите сопротивление картриджа!"); return; }
-            cart.push({ brand: "💨 Картридж Xros", flavor: select.value });
-            select.value = ""; 
-            updateUI();
-            alert("Картридж добавлен в корзину!");
+        // Открытие экрана с вкусами
+        function openBrand(brand) {
+            currentBrand = brand;
+            document.getElementById('main-screen').style.display = 'none';
+            document.getElementById('flavors-screen').style.display = 'block';
+            document.getElementById('flavors-title').innerText = brand;
+            document.getElementById('checkout-btn').style.display = 'none'; // Скрываем кнопку заказа на время
+
+            const container = document.getElementById('flavors-container');
+            container.innerHTML = '';
+
+            DATABASE[brand].forEach(f => {
+                const label = document.createElement('label');
+                label.className = 'flavor-checkbox';
+                label.innerHTML = `
+                    <input type="checkbox" value="${f}" class="flavor-check">
+                    ${f}
+                `;
+                container.appendChild(label);
+            });
+
+            // Если корзина не пуста, показываем кнопку заказа
+            if (cart.length > 0) document.getElementById('checkout-btn').style.display = 'block';
         }
 
-        function addBrandToCart(brandKey) {
-            const checkboxes = document.querySelectorAll(`input[data-brand="${brandKey}"]:checked`);
-            if (checkboxes.length === 0) { alert("Выберите хотя бы один вкус!"); return; }
-            checkboxes.forEach(cb => {
-                cart.push({ brand: flavorsData[brandKey].name, flavor: cb.value });
+        function goBack() {
+            document.getElementById('flavors-screen').style.display = 'none';
+            document.getElementById('main-screen').style.display = 'block';
+            updateUI(); // Обновляем кнопку заказа
+        }
+
+        function addSelectedToCart() {
+            const checked = document.querySelectorAll('.flavor-check:checked');
+            if (checked.length === 0) {
+                alert("Выберите хотя бы один вкус!");
+                return;
+            }
+
+            checked.forEach(cb => {
+                // Берем цену из текущей активной вкладки опта
+                cart.push({ brand: currentBrand, flavor: cb.value, price: PRICES[currentTab] });
                 cb.checked = false;
             });
-            updateUI();
-            alert("Добавлено!");
+
+            alert(`✅ Добавлено в корзину!`);
+            updateUI(); // Обновляем корзину и кнопку
         }
 
         function removeItem(index) {
@@ -272,7 +241,7 @@
         }
 
         function clearCart() {
-            if(confirm("Вы уверены, что хотите очистить всю корзину?")) {
+            if(confirm("Очистить всю корзину?")) {
                 cart = [];
                 updateUI();
             }
@@ -284,30 +253,31 @@
             const cartList = document.getElementById('cart-list');
 
             if (cart.length > 0) {
-                let price = 15;
-                if (cart.length >= 100) price = 11;
-                else if (cart.length >= 50) price = 12;
-                else if (cart.length >= 30) price = 13;
-                else if (cart.length >= 10) price = 14;
-
-                let total = cart.length * price;
-
+                let total = cart.reduce((sum, item) => sum + item.price, 0);
                 btn.style.display = 'block';
                 btn.innerText = `🛒 Оформить (${cart.length} шт.) на ${total} руб.`;
 
                 cartSection.style.display = 'block';
                 cartList.innerHTML = ''; 
 
-                cart.forEach((item, index) => {
+                // Группируем для вывода
+                const grouped = {};
+                cart.forEach(i => { 
+                    const key = `${i.brand} - ${i.flavor}`;
+                    grouped[key] = (grouped[key] || 0) + 1;
+                });
+
+                let index = 0;
+                for (let key in grouped) {
                     const div = document.createElement('div');
                     div.className = 'cart-item';
                     div.innerHTML = `
-                        <span>${item.brand} - ${item.flavor}</span>
+                        <span>${key} (x${grouped[key]})</span>
                         <button class="delete-btn" onclick="removeItem(${index})">❌</button>
                     `;
                     cartList.appendChild(div);
-                });
-
+                    index++;
+                }
             } else {
                 btn.style.display = 'none';
                 cartSection.style.display = 'none';
@@ -315,19 +285,22 @@
         }
 
         function toggleMetro() {
-            if (cart.length === 0) { alert("Ваша корзина пуста. Добавьте товары!"); return; }
-            const sec = document.getElementById('metro-section');
-            if (sec.style.display === 'none' || sec.style.display === '') {
-                sec.style.display = 'block';
-                document.getElementById('checkout-btn').innerText = "✅ Подтвердить заказ";
-                document.getElementById('checkout-btn').onclick = submitOrder;
-                window.scrollTo(0, document.body.scrollHeight);
-            }
+            if (cart.length === 0) { alert("Корзина пуста!"); return; }
+            document.getElementById('metro-section').style.display = 'block';
+            document.getElementById('checkout-btn').innerText = "✅ Подтвердить заказ";
+            document.getElementById('checkout-btn').onclick = submitOrder;
+            window.scrollTo(0, document.body.scrollHeight);
         }
 
         function showLine(line) {
             const list = document.getElementById('stations-list');
             list.innerHTML = '';
+            const lines = {
+                blue: ["Малиновка", "Петровщина", "Михалово", "Грушевка", "Институт культуры", "Площадь Ленина", "Октябрьская", "Площадь Победы", "Площадь Якуба Коласа", "Академия наук", "Парк Челюскинцев", "Московская", "Восток", "Борисовский тракт", "Уручье"],
+                red: ["Каменная Горка", "Кунцевщина", "Спортивная", "Пушкинская", "Молодёжная", "Фрунзенская", "Немига", "Купаловская", "Первомайская", "Пролетарская", "Тракторный завод", "Партизанская", "Автозаводская", "Могилёвская"],
+                green: ["Слуцкий Гостинец", "Новаторская", "Вокзальная", "Ковальская Слобода", "Юбилейная площадь"]
+            };
+            
             lines[line].forEach(st => {
                 const btn = document.createElement('button');
                 btn.className = 'station-btn';
@@ -342,80 +315,13 @@
         }
 
         function submitOrder() {
-            if (!selectedStation) { alert("⚠️ Выберите станцию метро!"); return; }
+            if (!selectedStation) { alert("Выберите станцию метро!"); return; }
 
-            const adminId = "5569005187";
-            let price = 15;
-            if (cart.length >= 100) price = 11;
-            else if (cart.length >= 50) price = 12;
-            else if (cart.length >= 30) price = 13;
-            else if (cart.length >= 10) price = 14;
-            let total = cart.length * price;
+            let total = cart.reduce((sum, item) => sum + item.price, 0);
 
             let items = {};
             cart.forEach(i => { let k = `${i.brand} [${i.flavor}]`; items[k] = (items[k] || 0) + 1; });
             let text = "";
             for (let k in items) text += `${k} - ${items[k]} шт.\n`;
 
-            let msgAdmin = `🔥 Заказ!\n${text}\nИтого: ${total} руб.\n🚇 ${selectedStation}\nКлиент: @${user?.username || user?.first_name}\nID: ${user?.id}`;
-            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${adminId}&text=${encodeURIComponent(msgAdmin)}`);
-
-            if (user?.id) {
-                let msgClient = `✅ Спасибо! Вы заказали:\n${text}\nИтого: ${total} руб.\n🚇 ${selectedStation}`;
-                fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${user.id}&text=${encodeURIComponent(msgClient)}`);
-            }
-
-            alert("Заказ отправлен!");
-            location.reload();
-        }
-
-        // === ЛОГИКА АДМИН-ПАНЕЛИ ===
-        function openAdminPanel() {
-            const list = document.getElementById('admin-flavors-list');
-            list.innerHTML = '';
-
-            for (let key in flavorsData) {
-                const brand = flavorsData[key];
-                let html = `<h4 style="color: #00ffff; margin-bottom: 5px; margin-top: 15px;">${brand.name}</h4>`;
-                
-                brand.list.forEach(f => {
-                    let isChecked = inStock[f] !== false ? 'checked' : '';
-                    html += `
-                        <label style="display: block; margin-bottom: 5px; font-size: 14px; cursor: pointer;">
-                            <input type="checkbox" data-flavor="${f}" ${isChecked} style="transform: scale(1.2); margin-right: 10px; cursor: pointer;"> 
-                            ${f}
-                        </label>
-                    `;
-                });
-                list.innerHTML += `<div style="margin-bottom: 15px; background: #252530; padding: 10px; border-radius: 8px; text-align: left;">${html}</div>`;
-            }
-
-            document.getElementById('admin-modal').style.display = 'block';
-        }
-
-        function closeAdminPanel() {
-            document.getElementById('admin-modal').style.display = 'none';
-        }
-
-               function saveAdminSettings() {
-            const checkboxes = document.querySelectorAll('#admin-flavors-list input[type="checkbox"]');
-            let newStock = {};
-
-            checkboxes.forEach(cb => {
-                newStock[cb.getAttribute('data-flavor')] = cb.checked;
-            });
-
-            // Сохраняем в память
-            localStorage.setItem('vape_stock', JSON.stringify(newStock));
-            
-            alert("✅ Настройки сохранены! Сейчас страница обновится, чтобы применить изменения.");
-            
-            // ФИНАЛЬНЫЙ КОСТЫЛЬ: случайный параметр в адресе
-            let randomHash = Math.random().toString(36).substring(7);
-            window.location.href = window.location.pathname + '?nocache=' + randomHash;
-        }
-
-        render();
-    </script>
-</body>
-</html>
+            let msgAdmin = `🔥 Заказ!\n${text}\nИтого: ${total} руб.\n🚇 ${selectedStation}\nКлиент: @${user?.username || user?.first_name}\
