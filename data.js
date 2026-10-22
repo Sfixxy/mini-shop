@@ -57,5 +57,26 @@ const DB = {
         "lost vape Ursa": { price: 11, flavors: ["Картридж Ursa Nano 0,6 ohm", "Картридж Ursa Nano 0,8 ohm"] },
         "smoant": { price: 8.50, flavors: ["Smoant Racer Катридж 0.4 ом", "Smoant Racer Катридж 0.6 ом", "Испаритель knight/pasito 2 K-1 0,3 ohm", "Испаритель knight/pasito 2 K-3 0,6 ohm", "Испаритель pasito mini P-1 0.6 ohm", "Испаритель santi S-4 0,35 ohm"] },
         "vaporesso": { price: 9.50, flavors: ["Картридж xros 0.6 3мл Corex 3.0"] }
+    },
+    snus: {
+        "Drymost 175mg": { price: 12, flavors: ["Mutant Nuclear Mint", "Gamma Mint"] },
+        "Drymost 200mg": { price: 12, flavors: ["Эвкалипт и Мята (Eucaliptus Mint)"] },
+        "Drymost 5 mg": { price: 11.50, flavors: ["Cool Mint", "Freez"] },
+        "Drymost 75mg": { price: 12, flavors: ["Эвкалипт Мята (Eucalyptus Mint)"] },
+        "Drymost TORNADO 200mg": { price: 12, flavors: ["Exotic Mania 200mg", "Freeze Breeze 200mg", "Ice Mint 200mg", "Ice Smoothie 200mg", "Merry Cherry 200mg", "Perry Perry 200mg", "Polar Lime 200mg"] },
+        "Faff 150мг": { price: 12, flavors: ["Жвачка Киви Клубника (Top Gum)", "Кактус (Cactus)", "Кола с Энергетиком (Energy Cola)", "Мармеладные Мишки (Gummy Bears)", "Мята (Top mint)", "Персиковый Чай (Peach Tea)", "Апельсиновая Газировка (Orange Soda)", "Вишневая Кола (Cherry cola)", "Кокос Клубника (COCOBERRY)", "Тутти-Фрутти (Fruit-tella)", "Шелковица (Mulberry)"] },
+        "Faff 65мг-100мг": { price: 11.50, flavors: ["Кокос (Cocos)", "Манго Апельсин (Tropic Storm)", "Черная Смородина (Dark Night)", "Мята (Spearmint)", "Cпрайт (Citron)", "Виноград (Izabella)", "Двойное Яблоко (Double Apple)", "Малиновый Звон (Raspberry Jingle)", "Энергетик (Energy)"] },
+        "Glitch 150мг": { price: 11.50, flavors: ["Апельсиновая фанта (Fanta orange)", "Вишня кола (Cherry cola)", "Двойная мята (Double mint)", "Двойная мята вишня (Double mint cherry)", "Двойное яблоко (Double apple)", "Кола лимон (Lemon cola)", "Ледяная груша (Ice pear)", "Ледяной арбуз (Ice watermelon)", "Ледяной лимон (Ice lemon)", "Ментол (Menthol)", "Мята (Spearmint)", "Мятная жвачка (Bubble gum mint)", "Полярная мята (Polar mint)", "Эвкалипт мята (Eucalyptus mint)"] },
+        "Glitch 200мг": { price: 11.50, flavors: ["Ментол (Menthol)", "Полярная мята (Polar mint)", "Эвкалипт мята (Eucalyptus mint)"] },
+        "Glitch 75мг": { price: 11.50, flavors: ["Апельсиновая фанта (Fanta orange)", "Двойная мята (Double mint)", "Кола лимон (Lemon cola)", "Ледяная груша (Ice pear)", "Ледяной лимон (Ice lemon)", "Ментол (Menthol)", "Мята (Spearmint)", "Мятная жвачка (Bubble gum mint)", "Полярная мята (Polar mint)", "Эвкалипт мята (Eucalyptus mint)"] },
+        "Iceberg Extreme 75mg": { price: 12, flavors: ["Ананас Манго Кокос (Pineapple Mango Coconut)", "Арбуз Лайм (Watermelon Lime)", "Дыня Персик (Melon Peach)", "Кола (Cola)", "Ментол (Menthol)", "Морозная Мята (Frosty Mint)", "Мята (Mint Explosion)", "Черная Мята (Black Mint)", "Черная Смородина (Black Currant)", "Яблоко Лимон Ананас (Apple Lemon Pineapple)"] },
+        "Iceberg Hardcore 150mg": { price: 12, flavors: ["Black Furry", "Dark Bubble", "Dark Matter", "Frozen Pulse", "Ice Shock"] },
+        "Iceberg Mini 150mg": { price: 9.50, flavors: ["Black", "Double Mint", "Menthol"] },
+        "Iceberg Nicotine Pouches 50mg": { price: 12, flavors: ["Cold Mint", "Frozen Pulse", "Ice Cool", "Cherry", "Raspberry", "Sour Berries"] },
+        "Iceberg OverKill 200mg": { price: 12, flavors: ["Ледяной апельсин (Citrus Blast)", "Тёмные ягоды (Night Crush)", "Ледяная мята (Polar Fury)"] },
+        "Iceberg Rising Sun Ultra 150mg": { price: 12, flavors: ["Клубника Гранат (Strawberry Pomegranate)", "Сладкая Мята (Sweet Mint)", "Энергетик Манго (Energy Mango)"] },
+        "Iceberg Ultra 150 mg": { price: 12, flavors: ["Двойная Мята (Double Mint)", "Клюквенный Чай (Cranberry Tea)", "Ментол (Menthol)"] },
+        "Nic 200mg": { price: 12, flavors: ["Ментол", "Хард Минт"] },
+        "Никобустеры": { price: 3, flavors: ["Никобустер 2%", "Никобустер 4%"] }
     }
 };
