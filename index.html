@@ -64,7 +64,6 @@
     <button id="checkout-btn" onclick="alert('Тут будет метро и отправка!')">🛒 Оформить заказ</button>
 
     <script>
-              
         let cart = [];
         let currentCategory = "";
         let currentBrand = "";
@@ -91,11 +90,4 @@
 
         function openBrand(brand) {
             currentBrand = brand;
-            document.getElementById('screen-brands').style.display = 'none';
-            document.getElementById('screen-flavors').style.display = 'block';
-            document.getElementById('flavors-title').innerText = brand;
-            const container = document.getElementById('flavors-container');
-            container.innerHTML = '';
-            DB[currentCategory][brand].forEach(f => {
-                const label = document.createElement('label');
-                label.class
+            document.getElementById('screen
