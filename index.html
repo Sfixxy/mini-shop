@@ -12,7 +12,7 @@
         .tab-btn { flex: 1; background: #1c1c24; color: #888; padding: 12px; border: 1px solid #333; border-radius: 8px; font-size: 14px; white-space: nowrap; cursor: pointer; }
         .tab-btn.active { background: #b366ff; color: #fff; border-color: #b366ff; font-weight: bold; }
         .category-btn { background: #252530; padding: 20px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #333; cursor: pointer; text-align: center; font-size: 18px; font-weight: bold; color: #fff; display: block; width: 100%; }
-        .category-btn:hover { border-color: #b366ff; }
+        .category-btn:hover { border-color: #b366ff; background: #2a2a35; }
         .brand-btn { display: flex; justify-content: space-between; align-items: center; background: #1c1c24; padding: 15px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #2a2a35; cursor: pointer; font-size: 16px; font-weight: bold; }
         .brand-btn:hover { border-color: #b366ff; }
         .back-btn { background: #333; color: #fff; padding: 10px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; border: none; font-weight: bold; width: 100%; }
@@ -57,6 +57,7 @@
     <div id="screen-flavors" style="display: none;">
         <button class="back-btn" onclick="goToBrands()">← Назад к брендам</button>
         <h3 id="flavors-title" style="margin-top:0;"></h3>
+        <p id="flavors-price" style="color:#00ffff; font-weight:bold; margin-bottom:15px;"></p>
         <div class="flavors-grid" id="flavors-container"></div>
         <button class="action-btn" onclick="addSelectedToCart()">➕ Добавить выбранные</button>
     </div>
@@ -86,7 +87,7 @@
         let selectedStation = "";
         let currentCategory = "";
         let currentBrand = "";
-        const PRICES = { '10': 15, '30': 15, '50': 15, '100': 15 };
+        let currentPrice = 0;
 
         function changeTab(tab, e) {
             currentTab = tab;
@@ -106,7 +107,7 @@
             for (let brand in DB[cat]) {
                 const div = document.createElement('div');
                 div.className = 'brand-btn';
-                div.innerHTML = `<span>${brand}</span>`;
+                div.innerHTML = `<span>${brand}</span><span style="color:#00ffff;">${DB[cat][brand].price} руб.</span>`;
                 div.onclick = () => openBrand(brand);
                 list.appendChild(div);
             }
@@ -119,12 +120,15 @@
 
         function openBrand(brand) {
             currentBrand = brand;
+            currentPrice = DB[currentCategory][brand].price;
             document.getElementById('screen-brands').style.display = 'none';
             document.getElementById('screen-flavors').style.display = 'block';
             document.getElementById('flavors-title').innerText = brand;
+            document.getElementById('flavors-price').innerText = `Цена: ${currentPrice} руб/шт`;
+            
             const container = document.getElementById('flavors-container');
             container.innerHTML = '';
-            DB[currentCategory][brand].forEach(f => {
+            DB[currentCategory][brand].flavors.forEach(f => {
                 const label = document.createElement('label');
                 label.className = 'flavor-checkbox';
                 label.innerHTML = `<input type="checkbox" value="${f}" class="flavor-check"> ${f}`;
@@ -141,7 +145,7 @@
             const checked = document.querySelectorAll('.flavor-check:checked');
             if (checked.length === 0) { alert("Выберите вкус!"); return; }
             checked.forEach(cb => {
-                cart.push({ brand: currentBrand, flavor: cb.value });
+                cart.push({ brand: currentBrand, flavor: cb.value, price: currentPrice });
                 cb.checked = false;
             });
             alert("Добавлено!");
@@ -154,16 +158,15 @@
             const cartList = document.getElementById('cart-list');
 
             if (cart.length > 0) {
-                let price = PRICES[currentTab];
-                let total = cart.length * price;
+                let total = cart.reduce((sum, item) => sum + item.price, 0);
                 btn.style.display = 'block';
-                btn.innerText = `🛒 Оформить (${cart.length} шт.) на ${total} руб.`;
+                btn.innerText = `🛒 Оформить (${cart.length} шт.) на ${total.toFixed(2)} руб.`;
                 cartSection.style.display = 'block';
                 cartList.innerHTML = ''; 
                 cart.forEach((item, index) => {
                     const div = document.createElement('div');
                     div.className = 'cart-item';
-                    div.innerHTML = `<span>${item.brand} - ${item.flavor}</span><button class="delete-btn" onclick="removeItem(${index})">X</button>`;
+                    div.innerHTML = `<span>${item.brand} - ${item.flavor} (${item.price} руб.)</span><button class="delete-btn" onclick="removeItem(${index})">X</button>`;
                     cartList.appendChild(div);
                 });
             } else {
@@ -213,16 +216,18 @@
 
         function submitOrder() {
             if (!selectedStation) { alert("Выберите станцию метро!"); return; }
-            let price = PRICES[currentTab];
-            let total = cart.length * price;
+            let total = cart.reduce((sum, item) => sum + item.price, 0);
             let text = "";
-            cart.forEach(i => text += `${i.brand} [${i.flavor}]\n`);
-            let msg = `🔥 Заказ!\n${text}\nИтого: ${total} руб.\n🚇 ${selectedStation}\nКлиент: @${user?.username || user?.first_name}\nID: ${user?.id}`;
+            cart.forEach(i => text += `${i.brand} [${i.flavor}] - ${i.price} руб.\n`);
+
+            let msg = `🔥 Заказ!\n${text}\nИтого: ${total.toFixed(2)} руб.\n🚇 ${selectedStation}\nКлиент: @${user?.username || user?.first_name}\nID: ${user?.id}`;
             fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=5569005187&text=${encodeURIComponent(msg)}`);
+
             if (user?.id) {
-                let msgClient = `✅ Спасибо! Вы заказали:\n${text}\nИтого: ${total} руб.\n🚇 ${selectedStation}`;
+                let msgClient = `✅ Спасибо! Вы заказали:\n${text}\nИтого: ${total.toFixed(2)} руб.\n🚇 ${selectedStation}`;
                 fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${user.id}&text=${encodeURIComponent(msgClient)}`);
             }
+
             alert("Заказ отправлен!");
             location.reload();
         }
