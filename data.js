@@ -30,7 +30,7 @@ const DB = {
         "2-OGGO Max 50mg": { price: 12, flavors: ["Сладкий Грейпфрут"] },
         "1-OGGO Sour 50mg": { price: 12, flavors: ["Грейпфрут (Grapefruit)", "Грейпфрут Черная Смородина (Grapefruit Blackcurrant)", "Киви (Kiwi)", "Киви Лимон Клюква (Kiwi Lemon Cranberry)", "Клюквенная Содовая (Cranberry Soda)", "Маракуйя (Passion Fruit)", "Мармеладные Червячки с Колой (Marmalade Worms Cola)", "Помело (Pomelo)"] },
         "1- SKALA 50 mg": { price: 11, flavors: ["Ананас Со Льдом", "Банан Со Льдом", "Барбарис Со Льдом", "Вишня Со Льдом", "Грейпфрут Со Льдом", "Груша Со Льдом", "Дыня Со Льдом", "Ежевика Со Льдом", "Земляника Со Льдом", "Кактус Со Льдом", "Киви Со Льдом", "Клубника со Льдом", "Клюква со Льдом", "Кола Со Льдом", "Крем Сода Со Льдом", "Лесные Ягоды со Льдом", "Лимонад Со Льдом", "Лимон-Лайм Со Льдом", "Личи Со Льдом", "Малина со Льдом", "Манго со Льдом", "Ментол Со Льдом", "Мультифрукт Со Льдом", "Персик со Льдом", "Сибирский Лимонад Со Льдом", "Тархун со Льдом", "Фейхоа со Льдом", "Хвоя Со Льдом", "Цитрусовый Микс Со Льдом", "Яблоко Со Льдом", "Черная Смородина Со Льдом", "Черника Со Льдом", "Шотландский Лимонад Со Льдом", "Энергетик Со Льдом", "Эрл Грей Со Льдом"] },
-        "1-SKL 50mg": { price: 10, flavors: ["Альпийская Мята", "Лимонный Чейзкейк"] },
+        "1-SKL 50mg": { price: 10, flavors: ["Альпийская Мята", "Лимонный Чизкейк"] },
         "1-Злая Милфа ACID 70mg": { price: 13, flavors: ["Гранат Мультифрукт", "Киви Ананас", "Цитрусовый Микс"] }
     },
     pods: {
@@ -51,5 +51,11 @@ const DB = {
         "Pulse Returns 15.000": { price: 23, flavors: ["Ледяная голубая малина (blue razz ice)", "Черешня (black cherry)", "Черника арбуз (blueberry watermelon)", "Ягодный лимонад (meta moon)", "Розовый лимонад (pink lemonade)", "Ледяное кислое яблоко (sour apple ice)", "Тропические фрукты (tropical rainbow blast)", "Белые мармеладные мишки лёд (white gummy ice)"] },
         "Vozol Vista 40000": { price: 31, flavors: ["Cool Mint"] },
         "YOOZ 25.000": { price: 27, flavors: ["Blueberry Raspberry (Черника Малина)", "Blueberry Raz Lemon (Черника Малина Лемон)", "Mix Berry (Микс Ягод)", "Mr Blue", "Sour Apple Ice (Кислое Яблоко Лед)", "Strawberry Banana (Клубника Банан)", "Strawberry Watermelon (Клубника Арбуз)", "Watermelon Ice (Арбуз Лед)", "White Gummy Ice"] }
+    },
+    coils: {
+        "Geekvape": { price: 10, flavors: ["Испаритель Aegis Coil B 0.15 Ohm Boost Version", "Испаритель Aegis Coil B0,2 ohm Boost Версия", "Картридж Aegis Nano 0,6 ohm", "Картридж (со встроенным испарителем) Geek Vape H45 Pod 0.4ohm 5ml"] },
+        "lost vape Ursa": { price: 11, flavors: ["Картридж Ursa Nano 0,6 ohm", "Картридж Ursa Nano 0,8 ohm"] },
+        "smoant": { price: 8.50, flavors: ["Smoant Racer Катридж 0.4 ом", "Smoant Racer Катридж 0.6 ом", "Испаритель knight/pasito 2 K-1 0,3 ohm", "Испаритель knight/pasito 2 K-3 0,6 ohm", "Испаритель pasito mini P-1 0.6 ohm", "Испаритель santi S-4 0,35 ohm"] },
+        "vaporesso": { price: 9.50, flavors: ["Картридж xros 0.6 3мл Corex 3.0"] }
     }
 };
