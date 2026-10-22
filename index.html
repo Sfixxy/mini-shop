@@ -6,78 +6,225 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="data.js"></script>
     <style>
-        body { font-family: Arial; background: #0f0f13; color: white; padding: 20px; }
-        button { display: block; width: 100%; padding: 15px; margin-bottom: 10px; background: #b366ff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f0f13; color: #e0e0e0; padding: 15px; padding-bottom: 100px; margin: 0; }
+        h2 { text-align: center; color: #b366ff; margin-bottom: 20px; font-weight: 800; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; }
+        .tab-btn { flex: 1; background: #1c1c24; color: #888; padding: 12px; border: 1px solid #333; border-radius: 8px; font-size: 14px; white-space: nowrap; cursor: pointer; }
+        .tab-btn.active { background: #b366ff; color: #fff; border-color: #b366ff; font-weight: bold; }
+        .category-btn { background: #252530; padding: 20px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #333; cursor: pointer; text-align: center; font-size: 18px; font-weight: bold; color: #fff; display: block; width: 100%; }
+        .category-btn:hover { border-color: #b366ff; }
+        .brand-btn { display: flex; justify-content: space-between; align-items: center; background: #1c1c24; padding: 15px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #2a2a35; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .brand-btn:hover { border-color: #b366ff; }
+        .back-btn { background: #333; color: #fff; padding: 10px; border-radius: 8px; margin-bottom: 15px; cursor: pointer; border: none; font-weight: bold; width: 100%; }
+        .flavors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; max-height: 300px; overflow-y: auto; }
+        .flavor-checkbox { display: flex; align-items: center; background: #252530; padding: 10px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+        .flavor-checkbox input { margin-right: 10px; }
+        button.action-btn { background: #b366ff; color: white; padding: 14px; border: none; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+        #checkout-btn { position: fixed; bottom: 0; left: 0; width: 100%; background: #00ffff; color: #000; padding: 20px; font-size: 18px; border: none; display: none; font-weight: bold; text-align: center; z-index: 100; }
+        #cart-section { display: none; background: #1c1c24; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2a2a35; }
+        .cart-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #333; font-size: 13px; }
+        .delete-btn { background: #e74c3c; color: white; border: none; border-radius: 5px; padding: 5px 8px; cursor: pointer; }
+        #metro-section { display: none; background: #1c1c24; padding: 20px; border-radius: 12px; margin-bottom: 15px; }
+        .line-btn { padding: 12px; border: none; border-radius: 8px; color: white; font-weight: bold; margin-bottom: 8px; width: 100%; cursor: pointer; }
+        .red { background: #e74c3c; } .blue { background: #3498db; } .green { background: #2ecc71; }
+        #stations-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
+        .station-btn { background: #252530; color: #ccc; border: 1px solid #444; font-size: 13px; padding: 10px; border-radius: 6px; cursor: pointer; }
+        .station-btn.selected { background: #b366ff; color: #fff; border-color: #b366ff; }
     </style>
 </head>
 <body>
     <h2>VAPE SHOP</h2>
-    
-    <div id="menu">
-        <button onclick="showCat('liquids')">💨 Жидкости</button>
-        <button onclick="showCat('pods')">📱 Поды</button>
-        <button onclick="showCat('coils')">⚙️ Картриджи</button>
-        <button onclick="showCat('snus')">🍬 Снюс</button>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="changeTab('10', event)">от 10 шт</button>
+        <button class="tab-btn" onclick="changeTab('30', event)">от 30 шт</button>
+        <button class="tab-btn" onclick="changeTab('50', event)">от 50 шт</button>
+        <button class="tab-btn" onclick="changeTab('100', event)">от 100 шт</button>
     </div>
 
-    <div id="brands" style="display: none;">
-        <button onclick="goBack()">← Назад</button>
+    <div id="screen-categories">
+        <button class="category-btn" onclick="openCategory('liquids')">💨 Жидкости</button>
+        <button class="category-btn" onclick="openCategory('pods')">📱 Поды (Одноразки)</button>
+        <button class="category-btn" onclick="openCategory('coils')">⚙️ Картриджи и Испарители</button>
+        <button class="category-btn" onclick="openCategory('snus')">🍬 Снюс и Никобустеры</button>
+    </div>
+
+    <div id="screen-brands" style="display: none;">
+        <button class="back-btn" onclick="goToCategories()">← Назад</button>
         <div id="brands-list"></div>
     </div>
 
-    <div id="flavors" style="display: none;">
-        <button onclick="goToBrands()">← Назад к брендам</button>
-        <h3 id="flavors-title"></h3>
-        <div id="flavors-list"></div>
+    <div id="screen-flavors" style="display: none;">
+        <button class="back-btn" onclick="goToBrands()">← Назад к брендам</button>
+        <h3 id="flavors-title" style="margin-top:0;"></h3>
+        <div class="flavors-grid" id="flavors-container"></div>
+        <button class="action-btn" onclick="addSelectedToCart()">➕ Добавить выбранные</button>
     </div>
 
+    <div id="cart-section">
+        <h3 style="color: #00ffff; font-size: 16px;">🛒 Корзина:</h3>
+        <div id="cart-list"></div>
+        <button onclick="clearCart()" style="background:#444; color:#fff; margin-top:10px; padding:10px; width:100%; border:none; border-radius:5px;">🗑 Очистить всё</button>
+    </div>
+
+    <div id="metro-section">
+        <h3 style="margin-top: 0; color: #fff;">🚇 Выберите ветку:</h3>
+        <button class="line-btn red" onclick="showLine('red')">🔴 Красная</button>
+        <button class="line-btn blue" onclick="showLine('blue')">🔵 Синяя</button>
+        <button class="line-btn green" onclick="showLine('green')">🟢 Зеленая</button>
+        <div id="stations-list"></div>
+    </div>
+
+    <button id="checkout-btn" onclick="toggleMetro()">🛒 Оформить заказ</button>
+
     <script>
+        const user = window.Telegram.WebApp.initDataUnsafe?.user;
+        const TOKEN = "8270338103:AAFx1KSB85vrwTyACfbIonpTHa4h0pXn-FA";
+
+        let cart = [];
+        let currentTab = '10';
+        let selectedStation = "";
         let currentCategory = "";
         let currentBrand = "";
+        const PRICES = { '10': 15, '30': 15, '50': 15, '100': 15 };
 
-        function showCat(cat) {
+        function changeTab(tab, e) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+        }
+
+        function openCategory(cat) {
             currentCategory = cat;
-            document.getElementById('menu').style.display = 'none';
-            document.getElementById('brands').style.display = 'block';
-            
+            document.getElementById('screen-categories').style.display = 'none';
+            document.getElementById('screen-brands').style.display = 'block';
             const list = document.getElementById('brands-list');
             list.innerHTML = '';
             
+            if (!DB[cat]) return;
+
             for (let brand in DB[cat]) {
-                const btn = document.createElement('button');
-                btn.innerText = brand;
-                btn.onclick = () => showFlavors(brand);
-                list.appendChild(btn);
+                const div = document.createElement('div');
+                div.className = 'brand-btn';
+                div.innerHTML = `<span>${brand}</span>`;
+                div.onclick = () => openBrand(brand);
+                list.appendChild(div);
             }
         }
 
-        function goBack() {
-            document.getElementById('brands').style.display = 'none';
-            document.getElementById('menu').style.display = 'block';
+        function goToCategories() {
+            document.getElementById('screen-brands').style.display = 'none';
+            document.getElementById('screen-categories').style.display = 'block';
         }
 
-        function showFlavors(brand) {
+        function openBrand(brand) {
             currentBrand = brand;
-            document.getElementById('brands').style.display = 'none';
-            document.getElementById('flavors').style.display = 'block';
+            document.getElementById('screen-brands').style.display = 'none';
+            document.getElementById('screen-flavors').style.display = 'block';
             document.getElementById('flavors-title').innerText = brand;
-            
-            const list = document.getElementById('flavors-list');
-            list.innerHTML = '';
-            
+            const container = document.getElementById('flavors-container');
+            container.innerHTML = '';
             DB[currentCategory][brand].forEach(f => {
-                const div = document.createElement('div');
-                div.style.padding = '10px';
-                div.style.background = '#1c1c24';
-                div.style.marginBottom = '5px';
-                div.innerText = f;
-                list.appendChild(div);
+                const label = document.createElement('label');
+                label.className = 'flavor-checkbox';
+                label.innerHTML = `<input type="checkbox" value="${f}" class="flavor-check"> ${f}`;
+                container.appendChild(label);
             });
         }
 
         function goToBrands() {
-            document.getElementById('flavors').style.display = 'none';
-            document.getElementById('brands').style.display = 'block';
+            document.getElementById('screen-flavors').style.display = 'none';
+            document.getElementById('screen-brands').style.display = 'block';
+        }
+
+        function addSelectedToCart() {
+            const checked = document.querySelectorAll('.flavor-check:checked');
+            if (checked.length === 0) { alert("Выберите вкус!"); return; }
+            checked.forEach(cb => {
+                cart.push({ brand: currentBrand, flavor: cb.value });
+                cb.checked = false;
+            });
+            alert("Добавлено!");
+            updateUI();
+        }
+
+        function updateUI() {
+            const btn = document.getElementById('checkout-btn');
+            const cartSection = document.getElementById('cart-section');
+            const cartList = document.getElementById('cart-list');
+
+            if (cart.length > 0) {
+                let price = PRICES[currentTab];
+                let total = cart.length * price;
+                btn.style.display = 'block';
+                btn.innerText = `🛒 Оформить (${cart.length} шт.) на ${total} руб.`;
+                cartSection.style.display = 'block';
+                cartList.innerHTML = ''; 
+                cart.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'cart-item';
+                    div.innerHTML = `<span>${item.brand} - ${item.flavor}</span><button class="delete-btn" onclick="removeItem(${index})">X</button>`;
+                    cartList.appendChild(div);
+                });
+            } else {
+                btn.style.display = 'none';
+                cartSection.style.display = 'none';
+            }
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1); 
+            updateUI();
+        }
+
+        function clearCart() {
+            cart = []; 
+            updateUI();
+        }
+
+        function toggleMetro() {
+            if (cart.length === 0) { alert("Корзина пуста!"); return; }
+            document.getElementById('metro-section').style.display = 'block';
+            document.getElementById('checkout-btn').innerText = "✅ Подтвердить заказ";
+            document.getElementById('checkout-btn').onclick = submitOrder;
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function showLine(line) {
+            const list = document.getElementById('stations-list');
+            list.innerHTML = '';
+            const lines = {
+                blue: ["Малиновка", "Петровщина", "Михалово", "Грушевка", "Институт культуры", "Площадь Ленина", "Октябрьская", "Площадь Победы", "Площадь Якуба Коласа", "Академия наук", "Парк Челюскинцев", "Московская", "Восток", "Борисовский тракт", "Уручье"],
+                red: ["Каменная Горка", "Кунцевщина", "Спортивная", "Пушкинская", "Молодёжная", "Фрунзенская", "Немига", "Купаловская", "Первомайская", "Пролетарская", "Тракторный завод", "Партизанская", "Автозаводская", "Могилёвская"],
+                green: ["Слуцкий Гостинец", "Новаторская", "Вокзальная", "Ковальская Слобода", "Юбилейная площадь"]
+            };
+            lines[line].forEach(st => {
+                const btn = document.createElement('button');
+                btn.className = 'station-btn';
+                btn.innerText = st;
+                btn.onclick = () => {
+                    document.querySelectorAll('.station-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedStation = st;
+                };
+                list.appendChild(btn);
+            });
+        }
+
+        function submitOrder() {
+            if (!selectedStation) { alert("Выберите станцию метро!"); return; }
+            let price = PRICES[currentTab];
+            let total = cart.length * price;
+            let text = "";
+            cart.forEach(i => text += `${i.brand} [${i.flavor}]\n`);
+            let msg = `🔥 Заказ!\n${text}\nИтого: ${total} руб.\n🚇 ${selectedStation}\nКлиент: @${user?.username || user?.first_name}\nID: ${user?.id}`;
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=5569005187&text=${encodeURIComponent(msg)}`);
+            if (user?.id) {
+                let msgClient = `✅ Спасибо! Вы заказали:\n${text}\nИтого: ${total} руб.\n🚇 ${selectedStation}`;
+                fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${user.id}&text=${encodeURIComponent(msgClient)}`);
+            }
+            alert("Заказ отправлен!");
+            location.reload();
         }
     </script>
 </body>
